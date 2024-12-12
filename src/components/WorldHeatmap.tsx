@@ -1,87 +1,114 @@
-import { ResponsiveChoropleth } from '@nivo/geo';
+import { useEffect, useRef } from 'react';
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { features } from '../data/world-countries';
 
-// Comprehensive mock data for global market interest levels
-const mockData = [
-  // North America
-  { id: "USA", value: 85, label: "United States", region: "North America" },
-  { id: "CAN", value: 72, label: "Canada", region: "North America" },
-  { id: "MEX", value: 58, label: "Mexico", region: "North America" },
-
-  // Europe
-  { id: "GBR", value: 78, label: "United Kingdom", region: "Europe" },
-  { id: "DEU", value: 76, label: "Germany", region: "Europe" },
-  { id: "FRA", value: 71, label: "France", region: "Europe" },
-  { id: "ITA", value: 65, label: "Italy", region: "Europe" },
-  { id: "ESP", value: 62, label: "Spain", region: "Europe" },
-  { id: "NLD", value: 69, label: "Netherlands", region: "Europe" },
-  { id: "CHE", value: 73, label: "Switzerland", region: "Europe" },
-  { id: "SWE", value: 67, label: "Sweden", region: "Europe" },
-
-  // Asia Pacific
-  { id: "CHN", value: 82, label: "China", region: "Asia Pacific" },
-  { id: "JPN", value: 77, label: "Japan", region: "Asia Pacific" },
-  { id: "KOR", value: 70, label: "South Korea", region: "Asia Pacific" },
-  { id: "IND", value: 75, label: "India", region: "Asia Pacific" },
-  { id: "SGP", value: 68, label: "Singapore", region: "Asia Pacific" },
-  { id: "AUS", value: 66, label: "Australia", region: "Asia Pacific" },
-  { id: "IDN", value: 55, label: "Indonesia", region: "Asia Pacific" },
-  { id: "MYS", value: 52, label: "Malaysia", region: "Asia Pacific" },
-
-  // Middle East & Africa
-  { id: "ARE", value: 64, label: "UAE", region: "Middle East" },
-  { id: "SAU", value: 59, label: "Saudi Arabia", region: "Middle East" },
-  { id: "ISR", value: 63, label: "Israel", region: "Middle East" },
-  { id: "ZAF", value: 48, label: "South Africa", region: "Africa" },
-  { id: "EGY", value: 45, label: "Egypt", region: "Africa" },
-  { id: "NGA", value: 42, label: "Nigeria", region: "Africa" },
-
-  // Latin America
-  { id: "BRA", value: 61, label: "Brazil", region: "Latin America" },
-  { id: "ARG", value: 54, label: "Argentina", region: "Latin America" },
-  { id: "CHL", value: 53, label: "Chile", region: "Latin America" },
-  { id: "COL", value: 49, label: "Colombia", region: "Latin America" },
-  { id: "PER", value: 47, label: "Peru", region: "Latin America" }
-];
+// Helper function to generate mock data
+const generateMockData = () => {
+  const features = [];
+  for (let i = 0; i < 1000; i++) {
+    features.push({
+      type: 'Feature',
+      properties: {
+        value: Math.random() * 1000
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [
+          Math.random() * 360 - 180, // longitude
+          Math.random() * 170 - 85   // latitude
+        ]
+      }
+    });
+  }
+  return features;
+};
 
 export const WorldHeatmap = () => {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<maplibregl.Map | null>(null);
+
+  useEffect(() => {
+    if (!mapContainer.current) return;
+
+    // Initialize the map
+    map.current = new maplibregl.Map({
+      container: mapContainer.current,
+      style: 'https://api.maptiler.com/maps/basic-v2/style.json?key=3CVJZZkxVQc2qVqmWYGg',
+      center: [0, 20],
+      zoom: 2
+    });
+
+    // Add heatmap data when map loads
+    map.current.on('load', () => {
+      if (!map.current) return;
+
+      map.current.addSource('world-data', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: generateMockData()
+        }
+      });
+
+      map.current.addLayer({
+        id: 'world-heat',
+        type: 'heatmap',
+        source: 'world-data',
+        maxzoom: 9,
+        paint: {
+          'heatmap-weight': [
+            'interpolate', ['linear'],
+            ['get', 'value'],
+            0, 0,
+            1000, 1
+          ],
+          'heatmap-intensity': [
+            'interpolate', ['linear'],
+            ['zoom'],
+            0, 1,
+            9, 3
+          ],
+          'heatmap-color': [
+            'interpolate', ['linear'],
+            ['heatmap-density'],
+            0, 'rgba(33,102,172,0)',
+            0.2, 'rgb(103,169,207)',
+            0.4, 'rgb(209,229,240)',
+            0.6, 'rgb(253,219,199)',
+            0.8, 'rgb(239,138,98)',
+            1, 'rgb(178,24,43)'
+          ],
+          'heatmap-radius': [
+            'interpolate', ['linear'],
+            ['zoom'],
+            0, 2,
+            9, 20
+          ],
+          'heatmap-opacity': 0.8
+        }
+      });
+    });
+
+    // Cleanup
+    return () => {
+      if (map.current) {
+        map.current.remove();
+      }
+    };
+  }, []);
+
   return (
     <Card className="col-span-3 bg-gray-900 border-gray-800">
       <CardHeader>
         <CardTitle className="text-white">Global Prospect Interest Heatmap</CardTitle>
       </CardHeader>
       <CardContent>
-        <div style={{ height: '500px', width: '100%' }} className="relative">
-          <ResponsiveChoropleth
-            data={mockData}
-            features={features}
-            margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-            colors="blues"
-            domain={[0, 100]}
-            unknownColor="#2C3440"
-            label="properties.name"
-            valueFormat=".2s"
-            projectionScale={147}
-            projectionTranslation={[0.5, 0.5]}
-            projectionRotation={[-10, 0, 0]}
-            enableGraticule={false}
-            borderWidth={0.5}
-            borderColor="#152538"
-          />
-          
-          {/* Legend */}
-          <div className="absolute bottom-4 left-4 bg-gray-800 p-3 rounded-lg">
-            <div className="text-white text-sm mb-2">Interest Level</div>
-            <div className="flex items-center gap-2">
-              <div className="w-24 h-3 bg-gradient-to-r from-[#C6DBEF] to-[#084B8A]" />
-              <div className="flex justify-between w-full text-xs text-white">
-                <span>0%</span>
-                <span>100%</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div 
+          ref={mapContainer} 
+          style={{ height: '500px', width: '100%' }} 
+          className="rounded-lg overflow-hidden"
+        />
       </CardContent>
     </Card>
   );
