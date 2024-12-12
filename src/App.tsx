@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import { SessionContextProvider, useSessionContext } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -24,30 +24,13 @@ import ChatAssistant from "./pages/ChatAssistant";
 const queryClient = new QueryClient();
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const { session, isLoading } = useSessionContext();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setIsAuthenticated(!!session);
-    };
-    
-    checkAuth();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(!!session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (isAuthenticated === null) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (!isAuthenticated) {
+  if (!session) {
     return <Navigate to="/login" replace />;
   }
 
@@ -67,30 +50,13 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AuthenticatedRoute = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const { session, isLoading } = useSessionContext();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setIsAuthenticated(!!session);
-    };
-    
-    checkAuth();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(!!session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (isAuthenticated === null) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <Landing />;
+  return session ? <Navigate to="/dashboard" replace /> : <Landing />;
 };
 
 const App = () => (
