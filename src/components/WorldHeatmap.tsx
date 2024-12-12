@@ -1,114 +1,25 @@
-import { useEffect, useRef } from 'react';
-import maplibregl from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 
 // Helper function to generate mock data
 const generateMockData = () => {
-  const features = [];
-  for (let i = 0; i < 1000; i++) {
-    features.push({
-      type: 'Feature',
-      properties: {
-        value: Math.random() * 1000
-      },
-      geometry: {
-        type: 'Point',
-        coordinates: [
-          Math.random() * 360 - 180, // longitude
-          Math.random() * 170 - 85   // latitude
-        ]
-      }
+  const points = [];
+  for (let i = 0; i < 50; i++) {
+    points.push({
+      coordinates: [
+        Math.random() * 360 - 180, // longitude
+        Math.random() * 170 - 85   // latitude
+      ],
+      value: Math.random() * 1000
     });
   }
-  return features;
+  return points;
 };
 
+const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
+
 export const WorldHeatmap = () => {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<maplibregl.Map | null>(null);
-  const mapInitialized = useRef(false);
-
-  useEffect(() => {
-    if (!mapContainer.current || mapInitialized.current) return;
-
-    mapInitialized.current = true;
-
-    // Initialize the map
-    const mapInstance = new maplibregl.Map({
-      container: mapContainer.current,
-      style: 'https://api.maptiler.com/maps/basic-v2/style.json?key=3CVJZZkxVQc2qVqmWYGg',
-      center: [0, 20],
-      zoom: 2
-    });
-
-    map.current = mapInstance;
-
-    // Add heatmap data when map loads
-    const onMapLoad = () => {
-      if (!mapInstance) return;
-
-      // Generate data once and store it
-      const data = {
-        type: 'FeatureCollection',
-        features: generateMockData()
-      };
-
-      mapInstance.addSource('world-data', {
-        type: 'geojson',
-        data
-      });
-
-      mapInstance.addLayer({
-        id: 'world-heat',
-        type: 'heatmap',
-        source: 'world-data',
-        maxzoom: 9,
-        paint: {
-          'heatmap-weight': [
-            'interpolate', ['linear'],
-            ['get', 'value'],
-            0, 0,
-            1000, 1
-          ],
-          'heatmap-intensity': [
-            'interpolate', ['linear'],
-            ['zoom'],
-            0, 1,
-            9, 3
-          ],
-          'heatmap-color': [
-            'interpolate', ['linear'],
-            ['heatmap-density'],
-            0, 'rgba(33,102,172,0)',
-            0.2, 'rgb(103,169,207)',
-            0.4, 'rgb(209,229,240)',
-            0.6, 'rgb(253,219,199)',
-            0.8, 'rgb(239,138,98)',
-            1, 'rgb(178,24,43)'
-          ],
-          'heatmap-radius': [
-            'interpolate', ['linear'],
-            ['zoom'],
-            0, 2,
-            9, 20
-          ],
-          'heatmap-opacity': 0.8
-        }
-      });
-    };
-
-    mapInstance.once('load', onMapLoad);
-
-    // Cleanup
-    return () => {
-      if (mapInstance) {
-        mapInstance.remove();
-      }
-      map.current = null;
-      mapInitialized.current = false;
-    };
-  }, []);
+  const data = generateMockData();
 
   return (
     <Card className="col-span-3 bg-gray-900 border-gray-800">
@@ -116,11 +27,41 @@ export const WorldHeatmap = () => {
         <CardTitle className="text-white">Global Prospect Interest Heatmap</CardTitle>
       </CardHeader>
       <CardContent>
-        <div 
-          ref={mapContainer} 
-          style={{ height: '500px', width: '100%' }} 
-          className="rounded-lg overflow-hidden"
-        />
+        <div style={{ height: '500px', width: '100%' }} className="rounded-lg overflow-hidden">
+          <ComposableMap
+            projectionConfig={{
+              scale: 147,
+            }}
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <Geographies geography={geoUrl}>
+              {({ geographies }) =>
+                geographies.map((geo) => (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    fill="#2C3440"
+                    stroke="#1F2937"
+                    strokeWidth={0.5}
+                  />
+                ))
+              }
+            </Geographies>
+            {data.map((point, index) => (
+              <Marker key={index} coordinates={point.coordinates as [number, number]}>
+                <circle
+                  r={Math.sqrt(point.value) / 10}
+                  fill="#F87171"
+                  fillOpacity={0.6}
+                  stroke="none"
+                />
+              </Marker>
+            ))}
+          </ComposableMap>
+        </div>
       </CardContent>
     </Card>
   );
