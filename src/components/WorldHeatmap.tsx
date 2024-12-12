@@ -16,7 +16,8 @@ const generateMockData = () => {
   return points;
 };
 
-const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
+// GeoJSON data for world countries
+const geoUrl = "/world-110m.json";
 
 export const WorldHeatmap = () => {
   const data = generateMockData();
