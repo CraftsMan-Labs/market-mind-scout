@@ -17,6 +17,7 @@ import StrategicInsights from "./pages/StrategicInsights";
 import AudienceInsights from "./pages/AudienceInsights";
 import DataAnalytics from "./pages/DataAnalytics";
 import CustomReport from "./pages/CustomReport";
+import Onboarding from "./pages/Onboarding";
 import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
@@ -87,6 +88,14 @@ const App = () => (
           <Routes>
             <Route path="/" element={<AuthenticatedRoute />} />
             <Route path="/login" element={<Login />} />
+            <Route
+              path="/onboarding"
+              element={
+                <ProtectedLayout>
+                  <Onboarding />
+                </ProtectedLayout>
+              }
+            />
             <Route
               path="/dashboard"
               element={
