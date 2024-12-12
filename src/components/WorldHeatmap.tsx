@@ -3,28 +3,47 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { scaleLinear } from "d3-scale";
 import { features } from "../data/world-countries";
 
-// Enhanced mock data for prospect interest levels by country
+// Comprehensive mock data for global market interest levels
 const mockData = [
-  { id: "USA", value: 85, label: "United States" },
-  { id: "CHN", value: 78, label: "China" },
-  { id: "IND", value: 72, label: "India" },
-  { id: "BRA", value: 65, label: "Brazil" },
-  { id: "GBR", value: 60, label: "United Kingdom" },
-  { id: "DEU", value: 58, label: "Germany" },
-  { id: "JPN", value: 55, label: "Japan" },
-  { id: "CAN", value: 52, label: "Canada" },
-  { id: "AUS", value: 48, label: "Australia" },
-  { id: "FRA", value: 45, label: "France" },
-  { id: "KOR", value: 42, label: "South Korea" },
-  { id: "MEX", value: 40, label: "Mexico" },
-  { id: "IDN", value: 38, label: "Indonesia" },
-  { id: "RUS", value: 35, label: "Russia" },
-  { id: "ZAF", value: 32, label: "South Africa" },
-  { id: "SGP", value: 30, label: "Singapore" },
-  { id: "ARE", value: 28, label: "UAE" },
-  { id: "NGA", value: 25, label: "Nigeria" },
-  { id: "SAU", value: 22, label: "Saudi Arabia" },
-  { id: "TUR", value: 20, label: "Turkey" },
+  // North America
+  { id: "USA", value: 85, label: "United States", region: "North America" },
+  { id: "CAN", value: 72, label: "Canada", region: "North America" },
+  { id: "MEX", value: 58, label: "Mexico", region: "North America" },
+
+  // Europe
+  { id: "GBR", value: 78, label: "United Kingdom", region: "Europe" },
+  { id: "DEU", value: 76, label: "Germany", region: "Europe" },
+  { id: "FRA", value: 71, label: "France", region: "Europe" },
+  { id: "ITA", value: 65, label: "Italy", region: "Europe" },
+  { id: "ESP", value: 62, label: "Spain", region: "Europe" },
+  { id: "NLD", value: 69, label: "Netherlands", region: "Europe" },
+  { id: "CHE", value: 73, label: "Switzerland", region: "Europe" },
+  { id: "SWE", value: 67, label: "Sweden", region: "Europe" },
+
+  // Asia Pacific
+  { id: "CHN", value: 82, label: "China", region: "Asia Pacific" },
+  { id: "JPN", value: 77, label: "Japan", region: "Asia Pacific" },
+  { id: "KOR", value: 70, label: "South Korea", region: "Asia Pacific" },
+  { id: "IND", value: 75, label: "India", region: "Asia Pacific" },
+  { id: "SGP", value: 68, label: "Singapore", region: "Asia Pacific" },
+  { id: "AUS", value: 66, label: "Australia", region: "Asia Pacific" },
+  { id: "IDN", value: 55, label: "Indonesia", region: "Asia Pacific" },
+  { id: "MYS", value: 52, label: "Malaysia", region: "Asia Pacific" },
+
+  // Middle East & Africa
+  { id: "ARE", value: 64, label: "UAE", region: "Middle East" },
+  { id: "SAU", value: 59, label: "Saudi Arabia", region: "Middle East" },
+  { id: "ISR", value: 63, label: "Israel", region: "Middle East" },
+  { id: "ZAF", value: 48, label: "South Africa", region: "Africa" },
+  { id: "EGY", value: 45, label: "Egypt", region: "Africa" },
+  { id: "NGA", value: 42, label: "Nigeria", region: "Africa" },
+
+  // Latin America
+  { id: "BRA", value: 61, label: "Brazil", region: "Latin America" },
+  { id: "ARG", value: 54, label: "Argentina", region: "Latin America" },
+  { id: "CHL", value: 53, label: "Chile", region: "Latin America" },
+  { id: "COL", value: 49, label: "Colombia", region: "Latin America" },
+  { id: "PER", value: 47, label: "Peru", region: "Latin America" }
 ];
 
 const colorScale = scaleLinear<string>()
