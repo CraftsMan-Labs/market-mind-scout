@@ -25,7 +25,7 @@ export const Features = () => {
   ];
 
   return (
-    <section className="py-24 bg-gradient-to-b from-[#1A1F2C] to-[#0f1218]">
+    <section className="py-24 bg-[#0f1218]">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-16 text-white">
           Powerful Features for Market Research
