@@ -47,8 +47,8 @@ export function ChatUI({ initialPrompt }: { initialPrompt?: string }) {
             <div
               className={`p-2 rounded-lg ${
                 message.role === "assistant"
-                  ? "bg-primary/10"
-                  : "bg-muted ml-auto"
+                  ? "bg-primary/10 text-white"
+                  : "bg-muted text-black ml-auto"
               }`}
             >
               <div className="flex items-center gap-2 mb-1">
