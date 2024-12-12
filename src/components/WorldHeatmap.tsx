@@ -2,18 +2,28 @@ import { ResponsiveChoropleth } from '@nivo/geo'
 import { features } from '../data/world-countries'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 
-// Mock data for prospect interest levels by country
+// Enhanced mock data for prospect interest levels by country
 const mockData = [
   { id: "USA", value: 85, label: "United States" },
-  { id: "CHN", value: 75, label: "China" },
-  { id: "IND", value: 70, label: "India" },
-  { id: "GBR", value: 65, label: "United Kingdom" },
-  { id: "DEU", value: 60, label: "Germany" },
-  { id: "BRA", value: 55, label: "Brazil" },
-  { id: "CAN", value: 50, label: "Canada" },
-  { id: "AUS", value: 45, label: "Australia" },
-  { id: "FRA", value: 40, label: "France" },
-  { id: "JPN", value: 35, label: "Japan" },
+  { id: "CHN", value: 78, label: "China" },
+  { id: "IND", value: 72, label: "India" },
+  { id: "BRA", value: 65, label: "Brazil" },
+  { id: "GBR", value: 60, label: "United Kingdom" },
+  { id: "DEU", value: 58, label: "Germany" },
+  { id: "JPN", value: 55, label: "Japan" },
+  { id: "CAN", value: 52, label: "Canada" },
+  { id: "AUS", value: 48, label: "Australia" },
+  { id: "FRA", value: 45, label: "France" },
+  { id: "KOR", value: 42, label: "South Korea" },
+  { id: "MEX", value: 40, label: "Mexico" },
+  { id: "IDN", value: 38, label: "Indonesia" },
+  { id: "RUS", value: 35, label: "Russia" },
+  { id: "ZAF", value: 32, label: "South Africa" },
+  { id: "SGP", value: 30, label: "Singapore" },
+  { id: "ARE", value: 28, label: "UAE" },
+  { id: "NGA", value: 25, label: "Nigeria" },
+  { id: "SAU", value: 22, label: "Saudi Arabia" },
+  { id: "TUR", value: 20, label: "Turkey" },
 ]
 
 export const WorldHeatmap = () => {

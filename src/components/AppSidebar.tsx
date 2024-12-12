@@ -1,4 +1,4 @@
-import { FileText, BarChart, PieChart, TrendingUp, Users, Database, Home } from "lucide-react"
+import { FileText, BarChart, PieChart, TrendingUp, Users, Database, Home, MessageSquare } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import {
   Sidebar,
@@ -39,6 +39,11 @@ const menuItems = [
         title: "Strategic Insights",
         icon: PieChart,
         path: "/strategic-insights"
+      },
+      {
+        title: "Chat Assistant",
+        icon: MessageSquare,
+        path: "/chat-assistant"
       },
     ]
   },

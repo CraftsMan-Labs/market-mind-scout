@@ -18,7 +18,7 @@ import AudienceInsights from "./pages/AudienceInsights";
 import DataAnalytics from "./pages/DataAnalytics";
 import CustomReport from "./pages/CustomReport";
 import Onboarding from "./pages/Onboarding";
-import { useEffect, useState } from "react";
+import ChatAssistant from "./pages/ChatAssistant";
 
 const queryClient = new QueryClient();
 
@@ -149,6 +149,14 @@ const App = () => (
               element={
                 <ProtectedLayout>
                   <CustomReport />
+                </ProtectedLayout>
+              }
+            />
+            <Route
+              path="/chat-assistant"
+              element={
+                <ProtectedLayout>
+                  <ChatAssistant />
                 </ProtectedLayout>
               }
             />
