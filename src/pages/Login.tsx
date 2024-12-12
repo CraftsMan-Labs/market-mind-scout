@@ -18,7 +18,7 @@ const Login = () => {
         password,
       });
       if (error) throw error;
-      navigate("/");
+      navigate("/dashboard");
     } catch (error: any) {
       toast({
         variant: "destructive",
