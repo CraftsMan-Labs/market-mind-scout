@@ -7,6 +7,9 @@ import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
+import MarketIntelligence from "./pages/MarketIntelligence";
+import CompetitorMapping from "./pages/CompetitorMapping";
+import StrategicInsights from "./pages/StrategicInsights";
 import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
@@ -53,6 +56,30 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Index />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/market-intelligence"
+              element={
+                <ProtectedRoute>
+                  <MarketIntelligence />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/competitor-mapping"
+              element={
+                <ProtectedRoute>
+                  <CompetitorMapping />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/strategic-insights"
+              element={
+                <ProtectedRoute>
+                  <StrategicInsights />
                 </ProtectedRoute>
               }
             />

@@ -1,4 +1,5 @@
 import { FileText, BarChart, PieChart, TrendingUp, Users, Database } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 import {
   Sidebar,
   SidebarContent,
@@ -17,17 +18,17 @@ const menuItems = [
       {
         title: "Market Intelligence",
         icon: BarChart,
-        prompt: "Generate a market intelligence report"
+        path: "/market-intelligence"
       },
       {
         title: "Competitor Mapping",
         icon: TrendingUp,
-        prompt: "Create a competitor mapping analysis"
+        path: "/competitor-mapping"
       },
       {
         title: "Strategic Insights",
         icon: PieChart,
-        prompt: "Analyze strategic insights and opportunities"
+        path: "/strategic-insights"
       },
     ]
   },
@@ -37,23 +38,25 @@ const menuItems = [
       {
         title: "Audience Insights",
         icon: Users,
-        prompt: "Generate audience insights report"
+        path: "/audience-insights"
       },
       {
         title: "Data Analytics",
         icon: Database,
-        prompt: "Create a data analytics report"
+        path: "/data-analytics"
       },
       {
         title: "Custom Report",
         icon: FileText,
-        prompt: "What type of report would you like to generate?"
+        path: "/custom-report"
       },
     ]
   }
 ]
 
-export function AppSidebar({ onReportSelect }: { onReportSelect: (prompt: string) => void }) {
+export function AppSidebar() {
+  const navigate = useNavigate()
+
   return (
     <Sidebar className="border-r border-gray-800 bg-black">
       <SidebarContent>
@@ -65,7 +68,7 @@ export function AppSidebar({ onReportSelect }: { onReportSelect: (prompt: string
                 {section.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
-                      onClick={() => onReportSelect(item.prompt)}
+                      onClick={() => navigate(item.path)}
                       className="hover:bg-gray-800"
                     >
                       <item.icon className="text-gray-400" />

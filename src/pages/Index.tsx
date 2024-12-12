@@ -3,12 +3,10 @@ import { DashboardStats } from "@/components/DashboardStats";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ChatUI } from "@/components/ChatUI";
 import { Hero } from "@/components/Hero";
-import { useState } from "react";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { useSessionContext } from "@supabase/auth-helpers-react";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const Index = () => {
-  const [currentPrompt, setCurrentPrompt] = useState<string>("");
   const { session } = useSessionContext();
 
   if (!session) {
@@ -20,7 +18,7 @@ const Index = () => {
       <DashboardNav />
       <SidebarProvider>
         <div className="flex w-full">
-          <AppSidebar onReportSelect={setCurrentPrompt} />
+          <AppSidebar />
           <main className="flex-1 p-8">
             <div className="flex items-center justify-between space-y-2 mb-8">
               <h2 className="text-3xl font-bold tracking-tight text-white">Overview</h2>
@@ -30,7 +28,7 @@ const Index = () => {
                 <DashboardStats />
               </div>
               <div className="mt-4">
-                <ChatUI initialPrompt={currentPrompt} />
+                <ChatUI initialPrompt="" />
               </div>
             </div>
           </main>
