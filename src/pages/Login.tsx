@@ -103,7 +103,7 @@ const Login = () => {
             <Button
               type="button"
               variant="outline"
-              className="w-full border-gray-800 text-white hover:bg-gray-800"
+              className="w-full border-gray-800 text-white hover:bg-gray-800 bg-[#33C3F0] hover:bg-[#33C3F0]/90"
               onClick={handleSignUp}
             >
               Create account

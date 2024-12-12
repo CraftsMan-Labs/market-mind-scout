@@ -12,7 +12,7 @@ export default function Landing() {
         <div className="absolute inset-0 bg-grid-white/10 -z-10" />
         <div className="container mx-auto px-4 py-24">
           <div className="text-center space-y-8 animate-fade-in">
-            <h1 className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+            <h1 className="text-5xl md:text-6xl font-bold text-primary">
               Market Intelligence Platform
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
