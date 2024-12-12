@@ -72,7 +72,7 @@ export function ChatUI({ initialPrompt }: { initialPrompt?: string }) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1"
+            className="flex-1 text-black"
           />
           <Button type="submit">Send</Button>
         </div>
