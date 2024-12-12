@@ -13,7 +13,7 @@ export default function Index() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <DashboardStats />
       </div>
-      <div className="grid gap-4">
+      <div className="grid gap-4 bg-gray-900 rounded-lg p-4">
         <WorldHeatmap />
       </div>
     </div>

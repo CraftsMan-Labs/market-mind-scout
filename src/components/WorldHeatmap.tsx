@@ -28,12 +28,12 @@ const mockData = [
 
 export const WorldHeatmap = () => {
   return (
-    <Card className="col-span-3">
+    <Card className="col-span-3 bg-gray-900 border-gray-800">
       <CardHeader>
-        <CardTitle>Global Prospect Interest Heatmap</CardTitle>
+        <CardTitle className="text-white">Global Prospect Interest Heatmap</CardTitle>
       </CardHeader>
       <CardContent>
-        <div style={{ height: '500px' }}>
+        <div style={{ height: '500px', width: '100%' }}>
           <ResponsiveChoropleth
             data={mockData}
             features={features}
@@ -50,6 +50,21 @@ export const WorldHeatmap = () => {
             graticuleLineColor="rgba(255, 255, 255, 0.2)"
             borderWidth={0.5}
             borderColor="#152538"
+            theme={{
+              text: {
+                fill: '#ffffff'
+              },
+              tooltip: {
+                container: {
+                  background: '#1f2937',
+                  color: '#ffffff',
+                  fontSize: '12px',
+                  borderRadius: '4px',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                  padding: '8px 12px'
+                }
+              }
+            }}
             legends={[
               {
                 anchor: 'bottom-left',
