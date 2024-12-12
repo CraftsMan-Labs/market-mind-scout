@@ -40,7 +40,7 @@ export const WorldHeatmap = () => {
     });
 
     // Add heatmap data when map loads
-    map.current.on('load', () => {
+    const onMapLoad = () => {
       if (!map.current) return;
 
       map.current.addSource('world-data', {
@@ -88,12 +88,15 @@ export const WorldHeatmap = () => {
           'heatmap-opacity': 0.8
         }
       });
-    });
+    };
+
+    map.current.on('load', onMapLoad);
 
     // Cleanup
     return () => {
       if (map.current) {
         map.current.remove();
+        map.current = null;
       }
     };
   }, []);
