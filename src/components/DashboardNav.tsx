@@ -57,9 +57,9 @@ export const DashboardNav = () => {
             <User className="h-4 w-4" />
           </Button>
           <Button 
-            variant="outline" 
+            variant="destructive" 
             onClick={handleSignOut}
-            className="border-gray-800 text-gray-300 hover:bg-gray-800"
+            className="bg-[#ea384c] hover:bg-[#ea384c]/90 text-white"
           >
             Sign out
           </Button>
