@@ -1,4 +1,4 @@
-import { ArrowRight, BarChart2, Globe, Lightbulb } from "lucide-react";
+import { ArrowRight, BarChart2, Globe, Lightbulb, ChartBar, Target, Zap } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -6,58 +6,88 @@ export const Hero = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-grid-white/10" />
-      </div>
+    <div className="relative min-h-screen">
+      <div className="absolute inset-0 bg-grid-white/10" />
       
-      <div className="container mx-auto px-4 py-16 relative z-10">
-        <div className="text-center space-y-8 animate-fade-in">
-          <h1 className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-            Market Edge Data Research Agent
-          </h1>
+      {/* Hero Section */}
+      <div className="relative">
+        <div className="container mx-auto px-4 py-16">
+          <div className="text-center space-y-8 animate-fade-in">
+            <h1 className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+              Market Edge Data Research Agent
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+              Transform your market research with AI-powered insights and real-time data analytics
+            </p>
+            
+            <div className="flex flex-wrap gap-4 justify-center items-center">
+              <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={() => navigate('/login')}>
+                Get Started <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button size="lg" variant="outline">
+                Watch Demo
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Features Section */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="p-6 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
+            <ChartBar className="h-10 w-10 text-primary mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Real-time Analytics</h3>
+            <p className="text-muted-foreground">Track market trends and competitor movements with live data updates</p>
+          </div>
           
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-            Empower your business decisions with AI-driven insights and gamified market research
+          <div className="p-6 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
+            <Target className="h-10 w-10 text-primary mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Audience Insights</h3>
+            <p className="text-muted-foreground">Understand your target market with detailed demographic analysis</p>
+          </div>
+          
+          <div className="p-6 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
+            <Zap className="h-10 w-10 text-primary mb-4" />
+            <h3 className="text-xl font-semibold mb-2">AI-Powered Reports</h3>
+            <p className="text-muted-foreground">Generate comprehensive market reports with one click</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Section */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+          <div className="p-6">
+            <div className="text-4xl font-bold text-primary mb-2">500+</div>
+            <div className="text-muted-foreground">Active Users</div>
+          </div>
+          <div className="p-6">
+            <div className="text-4xl font-bold text-primary mb-2">10k+</div>
+            <div className="text-muted-foreground">Reports Generated</div>
+          </div>
+          <div className="p-6">
+            <div className="text-4xl font-bold text-primary mb-2">98%</div>
+            <div className="text-muted-foreground">Accuracy Rate</div>
+          </div>
+          <div className="p-6">
+            <div className="text-4xl font-bold text-primary mb-2">24/7</div>
+            <div className="text-muted-foreground">Support Available</div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center space-y-6">
+          <h2 className="text-3xl md:text-4xl font-bold">Ready to transform your market research?</h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Join hundreds of businesses making data-driven decisions with our platform
           </p>
-          
-          <div className="flex flex-wrap gap-4 justify-center items-center">
-            <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={() => navigate('/login')}>
-              Get Started <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button size="lg" variant="outline">
-              Watch Demo
-            </Button>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-            {[
-              {
-                icon: Lightbulb,
-                title: "AI-Powered Insights",
-                description: "Get intelligent market analysis and recommendations",
-              },
-              {
-                icon: BarChart2,
-                title: "Data Visualization",
-                description: "Interactive charts and reports for clear understanding",
-              },
-              {
-                icon: Globe,
-                title: "Global Coverage",
-                description: "Access market data from around the world",
-              },
-            ].map((feature) => (
-              <div
-                key={feature.title}
-                className="p-6 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 animate-slide-in"
-              >
-                <feature.icon className="h-10 w-10 text-primary mb-4" />
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
-              </div>
-            ))}
-          </div>
+          <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={() => navigate('/login')}>
+            Start Free Trial <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
         </div>
       </div>
     </div>

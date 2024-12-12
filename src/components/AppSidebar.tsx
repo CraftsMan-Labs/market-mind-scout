@@ -1,17 +1,27 @@
-import { FileText, BarChart, PieChart, TrendingUp, Users, Database } from "lucide-react"
+import { FileText, BarChart, PieChart, TrendingUp, Users, Database, Home } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
 const menuItems = [
+  {
+    label: "Navigation",
+    items: [
+      {
+        title: "Home",
+        icon: Home,
+        path: "/"
+      }
+    ]
+  },
   {
     label: "Market Insights",
     items: [
