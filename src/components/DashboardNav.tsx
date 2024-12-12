@@ -4,14 +4,39 @@ import { Input } from "./ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "./ui/use-toast";
+import { useEffect, useState } from "react";
+import { Session } from "@supabase/supabase-js";
 
 export const DashboardNav = () => {
   const navigate = useNavigate();
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Listen for session changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleSignOut = async () => {
     try {
+      if (!session) {
+        navigate("/login");
+        return;
+      }
+
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      
       navigate("/login");
     } catch (error: any) {
       console.error("Logout error:", error);
