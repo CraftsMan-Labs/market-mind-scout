@@ -80,9 +80,9 @@ export default function Onboarding() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState(initialResponses);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    // Check if user is authenticated and has a profile
     const checkUserProfile = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
@@ -96,20 +96,26 @@ export default function Onboarding() {
           .from("profiles")
           .select("*")
           .eq("user_id", user.id)
-          .maybeSingle();
+          .single();
 
         if (profileError) {
-          throw profileError;
-        }
+          // If profile doesn't exist, create it
+          if (profileError.code === 'PGRST116') {
+            const { error: insertError } = await supabase
+              .from("profiles")
+              .insert([{ user_id: user.id }]);
 
-        // If no profile exists, create one
-        if (!profile) {
-          const { error: insertError } = await supabase
-            .from("profiles")
-            .insert([{ user_id: user.id }]);
-
-          if (insertError) {
-            throw insertError;
+            if (insertError) {
+              console.error("Error creating profile:", insertError);
+              toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to create user profile. Please try again.",
+              });
+              return;
+            }
+          } else {
+            throw profileError;
           }
         }
       } catch (error: any) {
@@ -148,6 +154,9 @@ export default function Onboarding() {
   };
 
   const handleSubmit = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
@@ -188,6 +197,8 @@ export default function Onboarding() {
         title: "Error",
         description: error.message || "Failed to save responses. Please try again.",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -210,6 +221,7 @@ export default function Onboarding() {
           onBack={handleBack}
           onNext={handleNext}
           onComplete={handleSubmit}
+          isSubmitting={isSubmitting}
         />
       </div>
     </div>
