@@ -27,9 +27,12 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setIsAuthenticated(!!session);
-    });
+    };
+    
+    checkAuth();
 
     const {
       data: { subscription },
@@ -45,7 +48,7 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
 
   return (
@@ -67,16 +70,27 @@ const AuthenticatedRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsAuthenticated(!!session);
+    };
+    
+    checkAuth();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthenticated(!!session);
     });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   if (isAuthenticated === null) {
     return <div>Loading...</div>;
   }
 
-  return isAuthenticated ? <Navigate to="/dashboard" /> : <Landing />;
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <Landing />;
 };
 
 const App = () => (
