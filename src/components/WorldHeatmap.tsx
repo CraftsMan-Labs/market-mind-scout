@@ -1,6 +1,6 @@
-import { ResponsiveChoropleth } from '@nivo/geo'
-import { features } from '../data/world-countries'
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { scaleLinear } from "d3-scale";
 
 // Enhanced mock data for prospect interest levels by country
 const mockData = [
@@ -24,7 +24,13 @@ const mockData = [
   { id: "NGA", value: 25, label: "Nigeria" },
   { id: "SAU", value: 22, label: "Saudi Arabia" },
   { id: "TUR", value: 20, label: "Turkey" },
-]
+];
+
+const colorScale = scaleLinear<string>()
+  .domain([0, 100])
+  .range(["#C6DBEF", "#084B8A"]);
+
+const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
 
 export const WorldHeatmap = () => {
   return (
@@ -33,66 +39,59 @@ export const WorldHeatmap = () => {
         <CardTitle className="text-white">Global Prospect Interest Heatmap</CardTitle>
       </CardHeader>
       <CardContent>
-        <div style={{ height: '500px', width: '100%' }}>
-          <ResponsiveChoropleth
-            data={mockData}
-            features={features}
-            margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-            colors="blues"
-            domain={[0, 100]}
-            unknownColor="#666666"
-            label="properties.name"
-            valueFormat=".2s"
-            projectionScale={140}
-            projectionTranslation={[0.5, 0.5]}
-            projectionRotation={[0, 0, 0]}
-            enableGraticule={true}
-            graticuleLineColor="rgba(255, 255, 255, 0.2)"
-            borderWidth={0.5}
-            borderColor="#152538"
-            theme={{
-              text: {
-                fill: '#ffffff'
-              },
-              tooltip: {
-                container: {
-                  background: '#1f2937',
-                  color: '#ffffff',
-                  fontSize: '12px',
-                  borderRadius: '4px',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                  padding: '8px 12px'
-                }
-              }
+        <div style={{ height: '500px', width: '100%' }} className="relative">
+          <ComposableMap
+            projectionConfig={{
+              rotate: [-10, 0, 0],
+              scale: 147
             }}
-            legends={[
-              {
-                anchor: 'bottom-left',
-                direction: 'column',
-                justify: true,
-                translateX: 20,
-                translateY: -20,
-                itemsSpacing: 0,
-                itemWidth: 94,
-                itemHeight: 18,
-                itemDirection: 'left-to-right',
-                itemTextColor: '#ffffff',
-                itemOpacity: 0.85,
-                symbolSize: 18,
-                effects: [
-                  {
-                    on: 'hover',
-                    style: {
-                      itemTextColor: '#ffffff',
-                      itemOpacity: 1
-                    }
-                  }
-                ]
-              }
-            ]}
-          />
+          >
+            <ZoomableGroup>
+              <Geographies geography={geoUrl}>
+                {({ geographies }) =>
+                  geographies.map((geo) => {
+                    const d = mockData.find((s) => s.id === geo.id);
+                    return (
+                      <Geography
+                        key={geo.rsmKey}
+                        geography={geo}
+                        fill={d ? colorScale(d.value) : "#2C3440"}
+                        stroke="#152538"
+                        strokeWidth={0.5}
+                        style={{
+                          default: {
+                            outline: "none"
+                          },
+                          hover: {
+                            fill: "#1E293B",
+                            outline: "none",
+                            transition: "all 250ms"
+                          },
+                          pressed: {
+                            outline: "none"
+                          }
+                        }}
+                      />
+                    );
+                  })
+                }
+              </Geographies>
+            </ZoomableGroup>
+          </ComposableMap>
+          
+          {/* Legend */}
+          <div className="absolute bottom-4 left-4 bg-gray-800 p-3 rounded-lg">
+            <div className="text-white text-sm mb-2">Interest Level</div>
+            <div className="flex items-center gap-2">
+              <div className="w-24 h-3 bg-gradient-to-r from-[#C6DBEF] to-[#084B8A]" />
+              <div className="flex justify-between w-full text-xs text-white">
+                <span>0%</span>
+                <span>100%</span>
+              </div>
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
