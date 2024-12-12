@@ -13,6 +13,9 @@ import Login from "./pages/Login";
 import MarketIntelligence from "./pages/MarketIntelligence";
 import CompetitorMapping from "./pages/CompetitorMapping";
 import StrategicInsights from "./pages/StrategicInsights";
+import AudienceInsights from "./pages/AudienceInsights";
+import DataAnalytics from "./pages/DataAnalytics";
+import CustomReport from "./pages/CustomReport";
 import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
@@ -95,6 +98,30 @@ const App = () => (
               element={
                 <ProtectedLayout>
                   <StrategicInsights />
+                </ProtectedLayout>
+              }
+            />
+            <Route
+              path="/audience-insights"
+              element={
+                <ProtectedLayout>
+                  <AudienceInsights />
+                </ProtectedLayout>
+              }
+            />
+            <Route
+              path="/data-analytics"
+              element={
+                <ProtectedLayout>
+                  <DataAnalytics />
+                </ProtectedLayout>
+              }
+            />
+            <Route
+              path="/custom-report"
+              element={
+                <ProtectedLayout>
+                  <CustomReport />
                 </ProtectedLayout>
               }
             />
