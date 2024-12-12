@@ -5,27 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "./ui/use-toast";
 import { useEffect, useState } from "react";
-import { Session } from "@supabase/supabase-js";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 
 export const DashboardNav = () => {
   const navigate = useNavigate();
-  const [session, setSession] = useState<Session | null>(null);
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    // Listen for session changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const { session, isLoading } = useSessionContext();
 
   const handleSignOut = async () => {
     try {
