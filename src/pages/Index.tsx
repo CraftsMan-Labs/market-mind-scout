@@ -2,11 +2,18 @@ import { DashboardNav } from "@/components/DashboardNav";
 import { DashboardStats } from "@/components/DashboardStats";
 import { AppSidebar } from "@/components/AppSidebar";
 import { ChatUI } from "@/components/ChatUI";
+import { Hero } from "@/components/Hero";
 import { useState } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 
 const Index = () => {
   const [currentPrompt, setCurrentPrompt] = useState<string>("");
+  const { session } = useSessionContext();
+
+  if (!session) {
+    return <Hero />;
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">
