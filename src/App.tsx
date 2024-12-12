@@ -5,6 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
+import { DashboardNav } from "@/components/DashboardNav";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import MarketIntelligence from "./pages/MarketIntelligence";
@@ -14,7 +17,7 @@ import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient();
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -39,7 +42,19 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/login" />;
   }
 
-  return <>{children}</>;
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <DashboardNav />
+      <SidebarProvider defaultOpen>
+        <div className="flex w-full">
+          <AppSidebar />
+          <main className="flex-1 p-8">
+            {children}
+          </main>
+        </div>
+      </SidebarProvider>
+    </div>
+  );
 };
 
 const App = () => (
@@ -54,33 +69,33 @@ const App = () => (
             <Route
               path="/"
               element={
-                <ProtectedRoute>
+                <ProtectedLayout>
                   <Index />
-                </ProtectedRoute>
+                </ProtectedLayout>
               }
             />
             <Route
               path="/market-intelligence"
               element={
-                <ProtectedRoute>
+                <ProtectedLayout>
                   <MarketIntelligence />
-                </ProtectedRoute>
+                </ProtectedLayout>
               }
             />
             <Route
               path="/competitor-mapping"
               element={
-                <ProtectedRoute>
+                <ProtectedLayout>
                   <CompetitorMapping />
-                </ProtectedRoute>
+                </ProtectedLayout>
               }
             />
             <Route
               path="/strategic-insights"
               element={
-                <ProtectedRoute>
+                <ProtectedLayout>
                   <StrategicInsights />
-                </ProtectedRoute>
+                </ProtectedLayout>
               }
             />
           </Routes>
