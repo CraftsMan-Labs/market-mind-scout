@@ -1,6 +1,7 @@
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { scaleLinear } from "d3-scale";
+import { features } from "../data/world-countries";
 
 // Enhanced mock data for prospect interest levels by country
 const mockData = [
@@ -30,8 +31,6 @@ const colorScale = scaleLinear<string>()
   .domain([0, 100])
   .range(["#C6DBEF", "#084B8A"]);
 
-const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
-
 export const WorldHeatmap = () => {
   return (
     <Card className="col-span-3 bg-gray-900 border-gray-800">
@@ -47,7 +46,7 @@ export const WorldHeatmap = () => {
             }}
           >
             <ZoomableGroup>
-              <Geographies geography={geoUrl}>
+              <Geographies geography={features}>
                 {({ geographies }) =>
                   geographies.map((geo) => {
                     const d = mockData.find((s) => s.id === geo.id);
