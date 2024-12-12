@@ -16,7 +16,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-black text-white">
       <DashboardNav />
-      <SidebarProvider>
+      <SidebarProvider defaultOpen>
         <div className="flex w-full">
           <AppSidebar />
           <main className="flex-1 p-8">
