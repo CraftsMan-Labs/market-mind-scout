@@ -25,9 +25,9 @@ export const Features = () => {
   ];
 
   return (
-    <section className="py-24 bg-gradient-to-b from-background to-primary/5">
+    <section className="py-24 bg-gradient-to-b from-[#1A1F2C] to-[#0f1218]">
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-bold text-center mb-16">
+        <h2 className="text-4xl font-bold text-center mb-16 text-white">
           Powerful Features for Market Research
         </h2>
         
@@ -35,11 +35,11 @@ export const Features = () => {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-primary/50 transition-colors duration-300"
+              className="p-6 rounded-xl bg-black/20 backdrop-blur-sm border border-white/10 hover:border-primary/50 transition-colors"
             >
               <feature.icon className="h-12 w-12 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.description}</p>
+              <h3 className="text-xl font-semibold mb-2 text-white">{feature.title}</h3>
+              <p className="text-gray-300">{feature.description}</p>
             </div>
           ))}
         </div>
