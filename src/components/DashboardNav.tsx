@@ -4,12 +4,11 @@ import { Input } from "./ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "./ui/use-toast";
-import { useEffect, useState } from "react";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 
 export const DashboardNav = () => {
   const navigate = useNavigate();
-  const { session, isLoading } = useSessionContext();
+  const { session } = useSessionContext();
 
   const handleSignOut = async () => {
     try {
@@ -19,7 +18,11 @@ export const DashboardNav = () => {
       }
 
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      
+      if (error) {
+        console.error("Logout error:", error);
+        throw error;
+      }
       
       navigate("/login");
     } catch (error: any) {
