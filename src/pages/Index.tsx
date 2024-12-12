@@ -1,60 +1,47 @@
-import { DashboardStats } from "@/components/DashboardStats";
-import { ChatUI } from "@/components/ChatUI";
-import { Hero } from "@/components/Hero";
-import { useSessionContext } from "@supabase/auth-helpers-react";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { DashboardStats } from "@/components/DashboardStats";
 import { supabase } from "@/integrations/supabase/client";
 
-const Index = () => {
-  const { session } = useSessionContext();
+export default function Index() {
   const navigate = useNavigate();
   const [onboardingStatus, setOnboardingStatus] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchOnboardingStatus = async () => {
-      if (session?.user) {
-        const { data, error } = await supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
           .from("profiles")
           .select("onboarding_status")
-          .eq("user_id", session.user.id)
+          .eq("user_id", user.id)
           .single();
-
-        if (!error && data) {
-          setOnboardingStatus(data.onboarding_status);
-        }
+        
+        setOnboardingStatus(data?.onboarding_status);
       }
     };
 
     fetchOnboardingStatus();
-  }, [session]);
-
-  if (!session) {
-    return <Hero />;
-  }
+  }, []);
 
   return (
-    <div className="grid gap-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight text-white">Overview</h2>
-        {onboardingStatus !== "completed" && (
-          <Button
-            onClick={() => navigate("/onboarding")}
-            className="bg-primary hover:bg-primary/90"
-          >
-            Complete Onboarding
+    <div className="space-y-8">
+      {onboardingStatus !== "completed" && (
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">Welcome to Market Edge!</h2>
+          <p className="text-gray-400 mb-4">
+            Complete our onboarding process to help us understand your business better and generate personalized reports.
+          </p>
+          <Button onClick={() => navigate("/onboarding")}>
+            Start Onboarding
           </Button>
-        )}
-      </div>
+        </div>
+      )}
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <DashboardStats />
       </div>
-      <div className="mt-4">
-        <ChatUI initialPrompt="" />
-      </div>
     </div>
   );
-};
-
-export default Index;
+}

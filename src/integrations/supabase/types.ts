@@ -9,7 +9,86 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      onboarding_responses: {
+        Row: {
+          business_goals: string | null
+          competitors: string | null
+          created_at: string | null
+          geographical_focus: string | null
+          id: string
+          product_description: string | null
+          product_name: string | null
+          target_audience: string | null
+          unique_value: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          business_goals?: string | null
+          competitors?: string | null
+          created_at?: string | null
+          geographical_focus?: string | null
+          id?: string
+          product_description?: string | null
+          product_name?: string | null
+          target_audience?: string | null
+          unique_value?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          business_goals?: string | null
+          competitors?: string | null
+          created_at?: string | null
+          geographical_focus?: string | null
+          id?: string
+          product_description?: string | null
+          product_name?: string | null
+          target_audience?: string | null
+          unique_value?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_responses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          onboarding_status:
+            | Database["public"]["Enums"]["onboarding_status"]
+            | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          onboarding_status?:
+            | Database["public"]["Enums"]["onboarding_status"]
+            | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          onboarding_status?:
+            | Database["public"]["Enums"]["onboarding_status"]
+            | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +97,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      onboarding_status: "not_started" | "in_progress" | "completed"
     }
     CompositeTypes: {
       [_ in never]: never

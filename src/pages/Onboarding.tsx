@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { OnboardingQuestion } from "@/components/onboarding/OnboardingQuestion";
+import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
+import { OnboardingNavigation } from "@/components/onboarding/OnboardingNavigation";
 
 interface Question {
   id: string;
@@ -111,14 +110,12 @@ export default function Onboarding() {
 
       if (!user) throw new Error("No user found");
 
-      // Save onboarding responses
       const { error: responsesError } = await supabase
         .from("onboarding_responses")
         .insert([{ ...responses, user_id: user.id }]);
 
       if (responsesError) throw responsesError;
 
-      // Update profile status
       const { error: profileError } = await supabase
         .from("profiles")
         .update({ onboarding_status: "completed" })
@@ -144,58 +141,24 @@ export default function Onboarding() {
   return (
     <div className="min-h-screen bg-black text-white p-8">
       <div className="max-w-2xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Onboarding ({currentStep + 1}/{questions.length})</h1>
-          <div className="text-sm text-gray-400">
-            Step {currentStep + 1} of {questions.length}
-          </div>
-        </div>
+        <OnboardingProgress currentStep={currentStep} totalSteps={questions.length} />
 
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">{currentQuestion.title}</h2>
-          <p className="text-gray-400">{currentQuestion.description}</p>
+        <OnboardingQuestion
+          title={currentQuestion.title}
+          description={currentQuestion.description}
+          value={responses[currentQuestion.field]}
+          onChange={handleInputChange}
+          type={currentQuestion.type}
+        />
 
-          {currentQuestion.type === "textarea" ? (
-            <Textarea
-              value={responses[currentQuestion.field]}
-              onChange={(e) => handleInputChange(e.target.value)}
-              className="bg-gray-900 border-gray-800"
-              rows={5}
-            />
-          ) : (
-            <Input
-              value={responses[currentQuestion.field]}
-              onChange={(e) => handleInputChange(e.target.value)}
-              className="bg-gray-900 border-gray-800"
-            />
-          )}
-        </div>
-
-        <div className="flex justify-between pt-4">
-          <Button
-            variant="outline"
-            onClick={handleBack}
-            disabled={currentStep === 0}
-            className="border-gray-800 text-white hover:bg-gray-800"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-
-          {currentStep === questions.length - 1 ? (
-            <Button onClick={handleSubmit} className="bg-primary hover:bg-primary/90">
-              Complete
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          ) : (
-            <Button onClick={handleNext} className="bg-primary hover:bg-primary/90">
-              Next
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          )}
-        </div>
+        <OnboardingNavigation
+          currentStep={currentStep}
+          totalSteps={questions.length}
+          onBack={handleBack}
+          onNext={handleNext}
+          onComplete={handleSubmit}
+        />
       </div>
     </div>
-  </div>
   );
 }
