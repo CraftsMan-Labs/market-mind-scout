@@ -10,18 +10,19 @@ const Index = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-black text-white">
         <DashboardNav />
         <div className="flex">
           <AppSidebar onReportSelect={setCurrentPrompt} />
           <main className="flex-1 p-8">
             <div className="flex items-center justify-between space-y-2 mb-8">
-              <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+              <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
             </div>
-            <div className="grid gap-8 grid-cols-1">
-              <DashboardStats />
-              <div className="mt-8">
-                <h3 className="text-xl font-semibold mb-4">AI Report Generator</h3>
+            <div className="grid gap-6">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <DashboardStats />
+              </div>
+              <div className="mt-4">
                 <ChatUI initialPrompt={currentPrompt} />
               </div>
             </div>
