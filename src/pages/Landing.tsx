@@ -26,7 +26,11 @@ export default function Landing() {
               >
                 Get Started <ArrowRight className="ml-2" />
               </Button>
-              <Button size="lg" variant="outline" className="border-gray-800">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-accent text-accent hover:bg-accent/10"
+              >
                 Watch Demo
               </Button>
             </div>
@@ -35,7 +39,7 @@ export default function Landing() {
       </div>
 
       {/* Features Section */}
-      <div className="py-24 bg-gradient-to-b from-background to-primary/5">
+      <div className="py-24 bg-black">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-16">
             Powerful Features for Market Research
@@ -91,7 +95,7 @@ export default function Landing() {
       </div>
 
       {/* CTA Section */}
-      <div className="py-24 bg-gradient-to-t from-background to-primary/5">
+      <div className="py-24">
         <div className="container mx-auto px-4">
           <div className="text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold">
