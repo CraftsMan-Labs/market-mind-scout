@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -81,6 +81,51 @@ export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState(initialResponses);
 
+  useEffect(() => {
+    // Check if user is authenticated and has a profile
+    const checkUserProfile = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          navigate('/login');
+          return;
+        }
+
+        // Check if profile exists
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (profileError) {
+          throw profileError;
+        }
+
+        // If no profile exists, create one
+        if (!profile) {
+          const { error: insertError } = await supabase
+            .from("profiles")
+            .insert([{ user_id: user.id }]);
+
+          if (insertError) {
+            throw insertError;
+          }
+        }
+      } catch (error: any) {
+        console.error("Error checking user profile:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to verify user profile. Please try again.",
+        });
+        navigate('/dashboard');
+      }
+    };
+
+    checkUserProfile();
+  }, [navigate]);
+
   const currentQuestion = questions[currentStep];
 
   const handleInputChange = (value: string) => {
@@ -104,24 +149,31 @@ export default function Onboarding() {
 
   const handleSubmit = async () => {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
+      const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
+      // First update the profile status to in_progress
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ onboarding_status: "in_progress" })
+        .eq("user_id", user.id);
+
+      if (profileError) throw profileError;
+
+      // Then save the onboarding responses
       const { error: responsesError } = await supabase
         .from("onboarding_responses")
         .insert([{ ...responses, user_id: user.id }]);
 
       if (responsesError) throw responsesError;
 
-      const { error: profileError } = await supabase
+      // Finally update the profile status to completed
+      const { error: completionError } = await supabase
         .from("profiles")
         .update({ onboarding_status: "completed" })
         .eq("user_id", user.id);
 
-      if (profileError) throw profileError;
+      if (completionError) throw completionError;
 
       toast({
         title: "Success!",
@@ -130,10 +182,11 @@ export default function Onboarding() {
 
       navigate("/dashboard");
     } catch (error: any) {
+      console.error("Error in handleSubmit:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to save responses. Please try again.",
       });
     }
   };
