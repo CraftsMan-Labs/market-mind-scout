@@ -1,7 +1,6 @@
-import { ComposableMap, Geographies, Geography, ZoomableGroup } from "react-simple-maps";
+import { ResponsiveChoropleth } from '@nivo/geo';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { scaleLinear } from "d3-scale";
-import { features } from "../data/world-countries";
+import { features } from '../data/world-countries';
 
 // Comprehensive mock data for global market interest levels
 const mockData = [
@@ -46,10 +45,6 @@ const mockData = [
   { id: "PER", value: 47, label: "Peru", region: "Latin America" }
 ];
 
-const colorScale = scaleLinear<string>()
-  .domain([0, 100])
-  .range(["#C6DBEF", "#084B8A"]);
-
 export const WorldHeatmap = () => {
   return (
     <Card className="col-span-3 bg-gray-900 border-gray-800">
@@ -58,44 +53,22 @@ export const WorldHeatmap = () => {
       </CardHeader>
       <CardContent>
         <div style={{ height: '500px', width: '100%' }} className="relative">
-          <ComposableMap
-            projectionConfig={{
-              rotate: [-10, 0, 0],
-              scale: 147
-            }}
-          >
-            <ZoomableGroup>
-              <Geographies geography={features}>
-                {({ geographies }) =>
-                  geographies.map((geo) => {
-                    const d = mockData.find((s) => s.id === geo.id);
-                    return (
-                      <Geography
-                        key={geo.rsmKey}
-                        geography={geo}
-                        fill={d ? colorScale(d.value) : "#2C3440"}
-                        stroke="#152538"
-                        strokeWidth={0.5}
-                        style={{
-                          default: {
-                            outline: "none"
-                          },
-                          hover: {
-                            fill: "#1E293B",
-                            outline: "none",
-                            transition: "all 250ms"
-                          },
-                          pressed: {
-                            outline: "none"
-                          }
-                        }}
-                      />
-                    );
-                  })
-                }
-              </Geographies>
-            </ZoomableGroup>
-          </ComposableMap>
+          <ResponsiveChoropleth
+            data={mockData}
+            features={features}
+            margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+            colors="blues"
+            domain={[0, 100]}
+            unknownColor="#2C3440"
+            label="properties.name"
+            valueFormat=".2s"
+            projectionScale={147}
+            projectionTranslation={[0.5, 0.5]}
+            projectionRotation={[-10, 0, 0]}
+            enableGraticule={false}
+            borderWidth={0.5}
+            borderColor="#152538"
+          />
           
           {/* Legend */}
           <div className="absolute bottom-4 left-4 bg-gray-800 p-3 rounded-lg">
