@@ -1,7 +1,10 @@
 import { ArrowRight, BarChart2, Globe, Lightbulb } from "lucide-react";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 export const Hero = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10">
       <div className="absolute inset-0 overflow-hidden">
@@ -19,7 +22,7 @@ export const Hero = () => {
           </p>
           
           <div className="flex flex-wrap gap-4 justify-center items-center">
-            <Button size="lg" className="bg-primary hover:bg-primary/90">
+            <Button size="lg" className="bg-primary hover:bg-primary/90" onClick={() => navigate('/login')}>
               Get Started <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button size="lg" variant="outline">
