@@ -27,31 +27,39 @@ const generateMockData = () => {
 export const WorldHeatmap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
+  const mapInitialized = useRef(false);
 
   useEffect(() => {
-    if (!mapContainer.current) return;
+    if (!mapContainer.current || mapInitialized.current) return;
+
+    mapInitialized.current = true;
 
     // Initialize the map
-    map.current = new maplibregl.Map({
+    const mapInstance = new maplibregl.Map({
       container: mapContainer.current,
       style: 'https://api.maptiler.com/maps/basic-v2/style.json?key=3CVJZZkxVQc2qVqmWYGg',
       center: [0, 20],
       zoom: 2
     });
 
+    map.current = mapInstance;
+
     // Add heatmap data when map loads
     const onMapLoad = () => {
-      if (!map.current) return;
+      if (!mapInstance) return;
 
-      map.current.addSource('world-data', {
+      // Generate data once and store it
+      const data = {
+        type: 'FeatureCollection',
+        features: generateMockData()
+      };
+
+      mapInstance.addSource('world-data', {
         type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: generateMockData()
-        }
+        data
       });
 
-      map.current.addLayer({
+      mapInstance.addLayer({
         id: 'world-heat',
         type: 'heatmap',
         source: 'world-data',
@@ -90,14 +98,15 @@ export const WorldHeatmap = () => {
       });
     };
 
-    map.current.on('load', onMapLoad);
+    mapInstance.once('load', onMapLoad);
 
     // Cleanup
     return () => {
-      if (map.current) {
-        map.current.remove();
-        map.current = null;
+      if (mapInstance) {
+        mapInstance.remove();
       }
+      map.current = null;
+      mapInitialized.current = false;
     };
   }, []);
 
