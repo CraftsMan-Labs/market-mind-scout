@@ -18,7 +18,7 @@ const menuItems = [
       {
         title: "Home",
         icon: Home,
-        path: "/"
+        path: "/dashboard"
       }
     ]
   },

@@ -61,6 +61,22 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+const AuthenticatedRoute = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
+  }, []);
+
+  if (isAuthenticated === null) {
+    return <div>Loading...</div>;
+  }
+
+  return isAuthenticated ? <Navigate to="/dashboard" /> : <Landing />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <SessionContextProvider supabaseClient={supabase}>
@@ -69,7 +85,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Landing />} />
+            <Route path="/" element={<AuthenticatedRoute />} />
             <Route path="/login" element={<Login />} />
             <Route
               path="/dashboard"
