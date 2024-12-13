@@ -3,35 +3,59 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { User, Bot } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
 
 interface Message {
-  role: "user" | "assistant"
+  role: "user" | "assistant" | "system"
   content: string
 }
 
 export function ChatUI({ initialPrompt }: { initialPrompt?: string }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState(initialPrompt || "")
+  const [isLoading, setIsLoading] = useState(false)
+  const { toast } = useToast()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!input.trim()) return
 
-    // Add user message
-    setMessages((prev) => [...prev, { role: "user", content: input }])
+    const userMessage = { role: "user", content: input }
     
-    // Simulate AI response (replace with actual API call)
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "This is a simulated response. Integrate with your preferred AI service to generate actual reports.",
-        },
-      ])
-    }, 1000)
+    // Add user message to chat
+    setMessages((prev) => [...prev, userMessage])
+    setIsLoading(true)
 
-    setInput("")
+    try {
+      const response = await fetch('https://your-api-url/chat/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [...messages, userMessage]
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to get response')
+      }
+
+      const data = await response.json()
+      
+      // Add AI response to chat
+      setMessages((prev) => [...prev, { role: "assistant", content: data.content }])
+    } catch (error) {
+      console.error('Chat error:', error)
+      toast({
+        title: "Error",
+        description: "Failed to get response from AI. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+      setInput("")
+    }
   }
 
   return (
@@ -45,7 +69,7 @@ export function ChatUI({ initialPrompt }: { initialPrompt?: string }) {
             }`}
           >
             <div
-              className={`p-2 rounded-lg ${
+              className={`p-2 rounded-lg max-w-[80%] ${
                 message.role === "assistant"
                   ? "bg-primary/10 text-white"
                   : "bg-muted text-black ml-auto"
@@ -61,10 +85,16 @@ export function ChatUI({ initialPrompt }: { initialPrompt?: string }) {
                   {message.role === "assistant" ? "AI Assistant" : "You"}
                 </span>
               </div>
-              <p className="text-sm">{message.content}</p>
+              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
             </div>
           </div>
         ))}
+        {isLoading && (
+          <div className="flex items-center gap-2 text-primary">
+            <Bot className="h-4 w-4 animate-spin" />
+            <span className="text-sm">Thinking...</span>
+          </div>
+        )}
       </ScrollArea>
       <form onSubmit={handleSubmit} className="p-4 border-t">
         <div className="flex gap-2">
@@ -73,8 +103,11 @@ export function ChatUI({ initialPrompt }: { initialPrompt?: string }) {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             className="flex-1 text-black"
+            disabled={isLoading}
           />
-          <Button type="submit">Send</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? "Sending..." : "Send"}
+          </Button>
         </div>
       </form>
     </div>
