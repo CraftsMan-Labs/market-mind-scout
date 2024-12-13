@@ -20,7 +20,7 @@ export function ChatUI({ initialPrompt }: { initialPrompt?: string }) {
     e.preventDefault()
     if (!input.trim()) return
 
-    const userMessage = { role: "user", content: input }
+    const userMessage: Message = { role: "user", content: input }
     
     // Add user message to chat
     setMessages((prev) => [...prev, userMessage])
@@ -44,7 +44,8 @@ export function ChatUI({ initialPrompt }: { initialPrompt?: string }) {
       const data = await response.json()
       
       // Add AI response to chat
-      setMessages((prev) => [...prev, { role: "assistant", content: data.content }])
+      const assistantMessage: Message = { role: "assistant", content: data.content }
+      setMessages((prev) => [...prev, assistantMessage])
     } catch (error) {
       console.error('Chat error:', error)
       toast({
