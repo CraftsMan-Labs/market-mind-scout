@@ -48,14 +48,16 @@ const CustomerOnboarding = () => {
         const { data, error } = await supabase
           .from("startup_evaluations")
           .select("*")
-          .eq("user_id", session.user.id)
-          .single();
+          .eq("user_id", session.user.id);
 
         if (error) throw error;
 
-        if (data) {
-          setFormData(data);
+        // If we have data, use the first record
+        if (data && data.length > 0) {
+          setFormData(data[0]);
         }
+        // If no data exists, we'll use the initialFormData (already set)
+        
       } catch (error: any) {
         console.error("Error fetching data:", error);
         toast({
