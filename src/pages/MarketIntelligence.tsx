@@ -21,10 +21,14 @@ const MarketIntelligence = () => {
         .from('market_intelligence_reports')
         .select('*')
         .eq('user_id', session.user.id)
-        .single();
+        .maybeSingle(); // Changed from single() to maybeSingle()
 
-      if (error) return null;
-      return data;
+      if (error) {
+        console.error('Error fetching market analysis:', error);
+        return null;
+      }
+
+      return data as MarketAnalysisData;
     } catch (error) {
       console.error('Error fetching existing market analysis:', error);
       return null;
@@ -39,7 +43,7 @@ const MarketIntelligence = () => {
         .from('startup_evaluations')
         .select('*')
         .eq('user_id', session.user.id)
-        .single();
+        .maybeSingle(); // Changed from single() to maybeSingle()
 
       if (error) return null;
       return data;
@@ -110,8 +114,9 @@ const MarketIntelligence = () => {
   }
 
   const generateMarketAnalysis = async (startupData: any) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
+      // Fix the query parameter issue
       const response = await fetch('http://localhost:8000/market-analysis/analyze', {
         method: 'POST',
         headers: {
@@ -119,7 +124,7 @@ const MarketIntelligence = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          query: `Product Domain: ${startupData.target_customer} Offerings: ${startupData.business_model}`,
+          query: `Product Domain: ${startupData.target_customer || ''} Offerings: ${startupData.business_model || ''}`,
           startup_data: startupData
         })
       });
@@ -132,10 +137,13 @@ const MarketIntelligence = () => {
       
       if (!session?.user?.id) throw new Error('No user ID found');
 
+      // Ensure the data matches our MarketAnalysisData type
       const data: MarketAnalysisData = {
         comprehensive_report: rawData.comprehensive_report,
         original_query: rawData.original_query,
-        problem_breakdown: rawData.problem_breakdown,
+        problem_breakdown: {
+          questions: rawData.problem_breakdown?.questions || []
+        },
         search_results: rawData.search_results,
         insights: rawData.problem_breakdown?.questions || [],
         metadata: {
