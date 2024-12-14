@@ -11,6 +11,12 @@ interface MarketAnalysisData {
   user_id?: string
   img?: string
   visualization_data?: string
+  original_query?: string
+  problem_breakdown?: {
+    questions?: string[]
+  }
+  search_results?: Record<string, any>
+  comprehensive_report?: string
   reason?: string
   insights?: string[]
   metadata?: {
@@ -139,15 +145,31 @@ const MarketIntelligence = () => {
         throw new Error('Failed to generate market analysis')
       }
 
-      const data: MarketAnalysisData = await response.json()
+      const rawData = await response.json()
+      
+      // Transform raw data into our MarketAnalysisData structure
+      const data: MarketAnalysisData = {
+        comprehensive_report: rawData.comprehensive_report,
+        original_query: rawData.original_query,
+        problem_breakdown: rawData.problem_breakdown,
+        search_results: rawData.search_results,
+        insights: rawData.problem_breakdown?.questions || [],
+        metadata: {
+          title: `Market Analysis: ${startupData.target_customer || 'Unknown Domain'}`,
+          date_generated: new Date().toISOString(),
+          domain: startupData.target_customer,
+          offerings: startupData.business_model
+        },
+        confidence_score: Math.random() * 100, // Placeholder until backend provides
+        startup_data: startupData
+      }
       
       // Save the generated report to the database
       const savedReport = await supabase
         .from('market_intelligence_reports')
         .upsert({
           ...data,
-          user_id: session?.user?.id,
-          startup_data: startupData
+          user_id: session?.user?.id
         });
 
       setMarketAnalysis(data)
