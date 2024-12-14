@@ -155,7 +155,7 @@ const CustomerOnboarding = () => {
               value={formData.value_proposition}
               onChange={(e) => handleInputChange("value_proposition", e.target.value)}
               placeholder="What unique value do you provide to your customers?"
-              className="bg-gray-800 border-gray-700"
+              className="bg-gray-800 border-gray-700 text-white"
             />
           </CardContent>
         </Card>
@@ -169,7 +169,7 @@ const CustomerOnboarding = () => {
               value={formData.business_model}
               onChange={(e) => handleInputChange("business_model", e.target.value)}
               placeholder="How does your business make money?"
-              className="bg-gray-800 border-gray-700"
+              className="bg-gray-800 border-gray-700 text-white"
             />
           </CardContent>
         </Card>
@@ -183,7 +183,7 @@ const CustomerOnboarding = () => {
               value={formData.current_traction}
               onChange={(e) => handleInputChange("current_traction", e.target.value)}
               placeholder="What traction have you achieved so far?"
-              className="bg-gray-800 border-gray-700"
+              className="bg-gray-800 border-gray-700 text-white"
             />
           </CardContent>
         </Card>
@@ -197,7 +197,7 @@ const CustomerOnboarding = () => {
               value={formData.funding_needs}
               onChange={(e) => handleInputChange("funding_needs", e.target.value)}
               placeholder="What are your current funding requirements?"
-              className="bg-gray-800 border-gray-700"
+              className="bg-gray-800 border-gray-700 text-white"
             />
           </CardContent>
         </Card>
@@ -211,7 +211,7 @@ const CustomerOnboarding = () => {
               value={formData.target_customer}
               onChange={(e) => handleInputChange("target_customer", e.target.value)}
               placeholder="Who is your ideal customer?"
-              className="bg-gray-800 border-gray-700"
+              className="bg-gray-800 border-gray-700 text-white"
             />
           </CardContent>
         </Card>
@@ -225,7 +225,7 @@ const CustomerOnboarding = () => {
               value={formData.key_metrics}
               onChange={(e) => handleInputChange("key_metrics", e.target.value)}
               placeholder="What are your key performance metrics?"
-              className="bg-gray-800 border-gray-700"
+              className="bg-gray-800 border-gray-700 text-white"
             />
           </CardContent>
         </Card>
@@ -239,7 +239,7 @@ const CustomerOnboarding = () => {
               value={formData.competition_strategy}
               onChange={(e) => handleInputChange("competition_strategy", e.target.value)}
               placeholder="How do you plan to compete in the market?"
-              className="bg-gray-800 border-gray-700"
+              className="bg-gray-800 border-gray-700 text-white"
             />
           </CardContent>
         </Card>
@@ -253,7 +253,7 @@ const CustomerOnboarding = () => {
               value={formData.team_description}
               onChange={(e) => handleInputChange("team_description", e.target.value)}
               placeholder="Tell us about your team..."
-              className="bg-gray-800 border-gray-700"
+              className="bg-gray-800 border-gray-700 text-white"
             />
           </CardContent>
         </Card>
@@ -267,7 +267,7 @@ const CustomerOnboarding = () => {
               value={formData.main_challenges}
               onChange={(e) => handleInputChange("main_challenges", e.target.value)}
               placeholder="What are your main challenges?"
-              className="bg-gray-800 border-gray-700"
+              className="bg-gray-800 border-gray-700 text-white"
             />
           </CardContent>
         </Card>
