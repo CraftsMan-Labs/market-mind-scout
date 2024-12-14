@@ -238,6 +238,8 @@ const MarketIntelligence = () => {
         <div className="flex items-center gap-2">
           <BarChartIcon className="h-8 w-8 text-gray-400" />
           <h1 className="text-3xl font-bold">Market Intelligence</h1>
+          <br />
+          <h1 className="text-xl text-muted-foreground">Strategic Insights Dashboard</h1>
         </div>
         <Button 
           onClick={fetchMarketAnalysis} 

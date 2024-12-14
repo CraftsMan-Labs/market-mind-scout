@@ -129,6 +129,8 @@ const CustomerOnboarding = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Customer Onboarding</h1>
+        <br />
+        <h1 className="text-xl text-muted-foreground">Startup Evaluation Form</h1>
       </div>
 
       <div className="grid gap-6">
