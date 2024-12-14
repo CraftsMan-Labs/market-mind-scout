@@ -125,7 +125,7 @@ const MarketIntelligence = () => {
     setIsLoading(true);
     try {
       const querystring = `query=Product Domain: ${startupData.target_customer || ''} Offerings: ${startupData.business_model || ''}`;
-      const response = await fetch(`http://localhost:8000/market-analysis/analyze?${querystring}`, {
+      const analysisResponse = await fetch(`http://localhost:8000/market-analysis/analyze?${querystring}`, {
         method: 'POST',
         headers: {
           'accept': 'application/json',
@@ -134,11 +134,11 @@ const MarketIntelligence = () => {
         body: JSON.stringify(startupData)
       });
 
-      if (!response.ok) {
+      if (!analysisResponse.ok) {
         throw new Error('Failed to generate market analysis');
       }
 
-      const rawData = await response.json();
+      const rawData = await analysisResponse.json();
       
       if (!session?.user?.id) throw new Error('No user ID found');
 
@@ -158,7 +158,6 @@ const MarketIntelligence = () => {
           y_axis_label: 'Market Impact',
           metrics: ['Growth', 'Innovation', 'Adoption']
         },
-        // Removed confidence score
         startup_data: startupData,
         user_id: session.user.id,
         market_drivers: rawData.search_results?.yearly_insights?.map(insight => ({
@@ -177,23 +176,66 @@ const MarketIntelligence = () => {
 
       setMarketAnalysis(data);
       
-      if (startupData?.target_customer && startupData?.business_model) {
-        await generateMarketVisualization(
-          startupData.target_customer, 
-          startupData.business_model
-        );
+      // Always generate visualization, even if regenerating
+      const visualizationQueryParams = new URLSearchParams({
+        query: `${startupData.target_customer} and ${startupData.business_model}`
+      });
+
+      const visualizationResponse = await fetch(`http://localhost:8000/market-analysis/visualize-trend?${visualizationQueryParams.toString()}`, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json'
+        }
+      });
+
+      if (!visualizationResponse.ok) {
+        throw new Error('Failed to generate market visualization');
+      }
+
+      const visualizationData: MarketVisualizationResponse = await visualizationResponse.json();
+
+      const updatedMarketAnalysis: MarketAnalysisData = {
+        ...data,
+        visualization_data: JSON.stringify({
+          trend_breakdown: visualizationData.trend_breakdown,
+          metadata: visualizationData.metadata
+        }),
+        metadata: {
+          ...data.metadata,
+          ...visualizationData.metadata,
+          domain: startupData.target_customer,
+          offerings: startupData.business_model
+        },
+        img: visualizationData.img,
+        confidence_score: visualizationData.confidence_score,
+        insights: visualizationData.insights,
+        seasonality_factors: visualizationData.seasonality_factors || [],
+        market_drivers: visualizationData.market_drivers || [],
+        user_id: session.user.id
+      };
+
+      const { error, data: updatedData } = await supabase
+        .from('market_intelligence_reports')
+        .upsert(updatedMarketAnalysis)
+        .select();
+
+      if (error) throw error;
+
+      // If upsert was successful and returned data
+      if (updatedData && updatedData.length > 0) {
+        setMarketAnalysis(updatedData[0]);
       }
 
       toast({
-        title: "Market Analysis Generated",
-        description: "New insights generated successfully"
+        title: "Market Analysis Regenerated",
+        description: "New insights and visualization generated successfully"
       });
     } catch (error) {
-      console.error('Market Analysis Generation Error:', error);
+      console.error('Market Analysis Regeneration Error:', error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Could not generate market analysis"
+        description: "Could not regenerate market analysis and visualization"
       });
     } finally {
       setIsLoading(false);
