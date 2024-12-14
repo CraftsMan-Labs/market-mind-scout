@@ -30,7 +30,7 @@ export function ChatUI({ initialPrompt }: { initialPrompt?: string }) {
       const response = await fetch('http://localhost:8000/chat/', {
         method: 'POST',
         headers: {
-          'accept': 'application/json',
+          'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
