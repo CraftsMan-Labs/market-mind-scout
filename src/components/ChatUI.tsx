@@ -30,7 +30,7 @@ export function ChatUI({ initialPrompt }: { initialPrompt?: string }) {
       const response = await fetch('http://localhost:8000/chat/', {
         method: 'POST',
         headers: {
-          'Accept': 'application/json',
+          'accept': 'application/json',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -45,7 +45,7 @@ export function ChatUI({ initialPrompt }: { initialPrompt?: string }) {
       const data = await response.json()
       
       // Add AI response to chat
-      const assistantMessage: Message = { role: "assistant", content: data.content }
+      const assistantMessage: Message = { role: "assistant", content: data.response }
       setMessages((prev) => [...prev, assistantMessage])
     } catch (error) {
       console.error('Chat error:', error)
