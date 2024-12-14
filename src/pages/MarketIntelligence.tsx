@@ -57,7 +57,7 @@ const MarketIntelligence = () => {
   const generateMarketVisualization = async (domain: string, offerings: string) => {
     try {
       const queryParams = new URLSearchParams({
-        query: `Product Domain: ${domain} Offerings: ${offerings}`
+        query: `${domain} and ${offerings}`
       });
 
       const response = await fetch(`http://localhost:8000/market-analysis/visualize-trend?${queryParams.toString()}`, {
@@ -76,7 +76,10 @@ const MarketIntelligence = () => {
       if (marketAnalysis && session?.user?.id) {
         const updatedMarketAnalysis: MarketAnalysisData = {
           ...marketAnalysis,
-          visualization_data: JSON.stringify(visualizationData),
+          visualization_data: JSON.stringify({
+            trend_breakdown: visualizationData.trend_breakdown,
+            metadata: visualizationData.metadata
+          }),
           metadata: {
             ...marketAnalysis.metadata,
             ...visualizationData.metadata,
@@ -86,23 +89,27 @@ const MarketIntelligence = () => {
           img: visualizationData.img,
           confidence_score: visualizationData.confidence_score,
           insights: visualizationData.insights,
-          seasonality_factors: visualizationData.seasonality_factors,
-          market_drivers: visualizationData.market_drivers,
+          seasonality_factors: visualizationData.seasonality_factors || [],
+          market_drivers: visualizationData.market_drivers || [],
           user_id: session.user.id
         };
 
-        const { error } = await supabase
+        const { error, data } = await supabase
           .from('market_intelligence_reports')
-          .upsert(updatedMarketAnalysis);
+          .upsert(updatedMarketAnalysis)
+          .select();
 
         if (error) throw error;
 
-        setMarketAnalysis(updatedMarketAnalysis);
+        // If upsert was successful and returned data
+        if (data && data.length > 0) {
+          setMarketAnalysis(data[0]);
 
-        toast({
-          title: "Market Visualization Generated",
-          description: "New market trend visualization created"
-        });
+          toast({
+            title: "Market Visualization Generated",
+            description: "New market trend visualization created"
+          });
+        }
       }
     } catch (error) {
       console.error('Market Visualization Generation Error:', error);
