@@ -1,38 +1,14 @@
 import React, { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart as BarChartIcon, Loader2 } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button"
 import { supabase } from "@/integrations/supabase/client"
 import { useSessionContext } from "@supabase/auth-helpers-react"
+import { MarketStats } from "@/components/market-intelligence/MarketStats"
+import { MarketVisualization } from "@/components/market-intelligence/MarketVisualization"
+import type { Database } from "@/integrations/supabase/types"
 
-interface MarketAnalysisData {
-  id?: string
-  user_id?: string
-  img?: string
-  visualization_data?: string
-  original_query?: string
-  problem_breakdown?: {
-    questions?: string[]
-  }
-  search_results?: Record<string, any>
-  comprehensive_report?: string
-  reason?: string
-  insights?: string[]
-  metadata?: {
-    title?: string
-    x_axis_label?: string
-    y_axis_label?: string
-    metrics?: string[]
-    date_generated?: string
-    domain?: string
-    offerings?: string
-  }
-  confidence_score?: number
-  seasonality_factors?: string[]
-  market_drivers?: Record<string, number>[]
-  startup_data?: any
-}
+type MarketAnalysisData = Database['public']['Tables']['market_intelligence_reports']['Row']
 
 const MarketIntelligence = () => {
   const [marketAnalysis, setMarketAnalysis] = useState<MarketAnalysisData | null>(null)
@@ -77,10 +53,7 @@ const MarketIntelligence = () => {
 
   const generateMarketVisualization = async (domain: string, offerings: string) => {
     try {
-      // Create the query string properly
-      const queryString = encodeURIComponent(`Product Domain: ${domain} Offerings: ${offerings}`);
-      
-      const response = await fetch(`http://localhost:8000/market-analysis/visualize-trend?query=${queryString}`, {
+      const response = await fetch(`http://localhost:8000/market-analysis/visualize-trend?query=${encodeURIComponent(`${domain} ${offerings}`)}`, {
         method: 'POST',
         headers: {
           'accept': 'application/json'
@@ -93,8 +66,7 @@ const MarketIntelligence = () => {
 
       const visualizationData = await response.text();
 
-      // Update the existing market analysis with visualization data
-      if (marketAnalysis) {
+      if (marketAnalysis && session?.user?.id) {
         const updatedMarketAnalysis = {
           ...marketAnalysis,
           visualization_data: visualizationData,
@@ -105,13 +77,14 @@ const MarketIntelligence = () => {
           }
         };
 
-        // Save updated market analysis to database
-        await supabase
+        const { error } = await supabase
           .from('market_intelligence_reports')
           .upsert({
             ...updatedMarketAnalysis,
-            user_id: session?.user?.id
+            user_id: session.user.id
           });
+
+        if (error) throw error;
 
         setMarketAnalysis(updatedMarketAnalysis);
 
@@ -151,8 +124,7 @@ const MarketIntelligence = () => {
 
       const rawData = await response.json()
       
-      // Transform raw data into our MarketAnalysisData structure
-      const data: MarketAnalysisData = {
+      const data: Partial<MarketAnalysisData> = {
         comprehensive_report: rawData.comprehensive_report,
         original_query: rawData.original_query,
         problem_breakdown: rawData.problem_breakdown,
@@ -164,21 +136,21 @@ const MarketIntelligence = () => {
           domain: startupData.target_customer,
           offerings: startupData.business_model
         },
-        confidence_score: Math.random() * 100, // Placeholder until backend provides
-        startup_data: startupData
+        confidence_score: Math.random() * 100,
+        startup_data: startupData,
+        user_id: session?.user?.id
       }
       
-      // Save the generated report to the database
-      const savedReport = await supabase
-        .from('market_intelligence_reports')
-        .upsert({
-          ...data,
-          user_id: session?.user?.id
-        });
+      if (!session?.user?.id) throw new Error('No user ID found');
 
-      setMarketAnalysis(data)
+      const { error: saveError } = await supabase
+        .from('market_intelligence_reports')
+        .upsert(data);
+
+      if (saveError) throw saveError;
+
+      setMarketAnalysis(data as MarketAnalysisData)
       
-      // Automatically generate visualization if startup data is available
       if (startupData?.target_customer && startupData?.business_model) {
         await generateMarketVisualization(
           startupData.target_customer, 
@@ -188,7 +160,7 @@ const MarketIntelligence = () => {
 
       toast({
         title: "Market Analysis Generated",
-        description: data.metadata?.title || "New insights generated successfully"
+        description: "New insights generated successfully"
       })
     } catch (error) {
       console.error('Market Analysis Generation Error:', error)
@@ -205,23 +177,21 @@ const MarketIntelligence = () => {
   const fetchMarketAnalysis = async () => {
     setIsLoading(true)
     try {
-      // First, try to fetch an existing report
       const existingReport = await fetchExistingMarketAnalysis()
       
       if (existingReport) {
         setMarketAnalysis(existingReport)
         toast({
           title: "Market Analysis Loaded",
-          description: existingReport.metadata?.title || "Existing report retrieved"
+          description: "Existing report retrieved"
         })
       } else {
-        // If no existing report, fetch startup data and generate a new one
         const startupData = await fetchStartupData()
         if (startupData) {
           await generateMarketAnalysis(startupData)
         } else {
           toast({
-            variant: "warning",
+            variant: "default",
             title: "No Data",
             description: "Please complete the Customer Onboarding first"
           })
@@ -265,75 +235,16 @@ const MarketIntelligence = () => {
         </div>
       ) : marketAnalysis ? (
         <div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-            <Card className="bg-card">
-              <CardHeader>
-                <CardTitle>Confidence Score</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {marketAnalysis.confidence_score?.toFixed(2) || 'N/A'}%
-                </div>
-                <p className="text-xs text-muted-foreground">Analysis Reliability</p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card">
-              <CardHeader>
-                <CardTitle>Key Insights</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-sm">
-                  {marketAnalysis.insights?.slice(0, 2).map((insight, index) => (
-                    <p key={index} className="mb-1">{insight}</p>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card">
-              <CardHeader>
-                <CardTitle>Date Generated</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-sm font-bold">
-                  {marketAnalysis.metadata?.date_generated || 'N/A'}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card">
-              <CardHeader>
-                <CardTitle>Seasonality Factors</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-sm">
-                  {marketAnalysis.seasonality_factors?.slice(0, 2).map((factor, index) => (
-                    <p key={index} className="mb-1">{factor}</p>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {(marketAnalysis.img || marketAnalysis.visualization_data) && (
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-4">Market Trend Visualization</h2>
-              {marketAnalysis.img && (
-                <img 
-                  src={`data:image/png;base64,${marketAnalysis.img}`} 
-                  alt="Market Trend" 
-                  className="w-full max-h-[500px] object-contain"
-                />
-              )}
-              {marketAnalysis.visualization_data && (
-                <div 
-                  dangerouslySetInnerHTML={{ __html: marketAnalysis.visualization_data }} 
-                  className="w-full max-h-[500px] overflow-auto"
-                />
-              )}
-            </div>
-          )}
+          <MarketStats 
+            confidenceScore={marketAnalysis.confidence_score}
+            insights={marketAnalysis.insights}
+            dateGenerated={marketAnalysis.metadata?.date_generated}
+            seasonalityFactors={marketAnalysis.seasonality_factors}
+          />
+          <MarketVisualization 
+            img={marketAnalysis.img}
+            visualizationData={marketAnalysis.visualization_data}
+          />
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center h-64 space-y-4">

@@ -9,6 +9,77 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      market_intelligence_reports: {
+        Row: {
+          comprehensive_report: string | null
+          confidence_score: number | null
+          created_at: string | null
+          id: string
+          insights: string[] | null
+          market_drivers: Json | null
+          metadata: Json | null
+          original_query: string | null
+          problem_breakdown: Json | null
+          search_results: Json | null
+          seasonality_factors: string[] | null
+          startup_data: Json | null
+          status:
+            | Database["public"]["Enums"]["market_intelligence_status"]
+            | null
+          updated_at: string | null
+          user_id: string
+          visualization_data: string | null
+        }
+        Insert: {
+          comprehensive_report?: string | null
+          confidence_score?: number | null
+          created_at?: string | null
+          id?: string
+          insights?: string[] | null
+          market_drivers?: Json | null
+          metadata?: Json | null
+          original_query?: string | null
+          problem_breakdown?: Json | null
+          search_results?: Json | null
+          seasonality_factors?: string[] | null
+          startup_data?: Json | null
+          status?:
+            | Database["public"]["Enums"]["market_intelligence_status"]
+            | null
+          updated_at?: string | null
+          user_id: string
+          visualization_data?: string | null
+        }
+        Update: {
+          comprehensive_report?: string | null
+          confidence_score?: number | null
+          created_at?: string | null
+          id?: string
+          insights?: string[] | null
+          market_drivers?: Json | null
+          metadata?: Json | null
+          original_query?: string | null
+          problem_breakdown?: Json | null
+          search_results?: Json | null
+          seasonality_factors?: string[] | null
+          startup_data?: Json | null
+          status?:
+            | Database["public"]["Enums"]["market_intelligence_status"]
+            | null
+          updated_at?: string | null
+          user_id?: string
+          visualization_data?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_intelligence_reports_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       onboarding_responses: {
         Row: {
           business_goals: string | null
@@ -165,6 +236,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      market_intelligence_status: "not_started" | "in_progress" | "completed"
       onboarding_status: "not_started" | "in_progress" | "completed"
       startup_evaluation_status: "not_started" | "in_progress" | "completed"
     }
