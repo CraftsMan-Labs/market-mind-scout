@@ -243,7 +243,7 @@ const MarketIntelligence = () => {
         <Button 
           onClick={fetchMarketAnalysis} 
           disabled={isLoading}
-          variant="outline"
+          className="bg-primary text-white hover:bg-primary/90"
         >
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Generate/Refresh Analysis"}
         </Button>
@@ -254,7 +254,7 @@ const MarketIntelligence = () => {
           <Loader2 className="h-12 w-12 animate-spin text-primary" />
         </div>
       ) : marketAnalysis ? (
-        <div>
+        <div className="space-y-6">
           <MarketStats 
             confidenceScore={marketAnalysis.confidence_score}
             insights={marketAnalysis.insights}
@@ -265,6 +265,31 @@ const MarketIntelligence = () => {
             img={marketAnalysis.img}
             visualizationData={marketAnalysis.visualization_data}
           />
+          <div className="bg-gray-900 p-6 rounded-lg">
+            <h2 className="text-2xl font-bold text-white mb-4">Comprehensive Market Analysis</h2>
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-200">Comprehensive Report</h3>
+                <p className="text-gray-300">{marketAnalysis.comprehensive_report || 'No detailed report available'}</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-200">Original Query</h3>
+                <p className="text-gray-300">{marketAnalysis.original_query || 'No query information'}</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-200">Problem Breakdown</h3>
+                <pre className="text-gray-300 bg-gray-800 p-3 rounded">
+                  {JSON.stringify(marketAnalysis.problem_breakdown, null, 2) || 'No problem breakdown available'}
+                </pre>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-200">Market Drivers</h3>
+                <pre className="text-gray-300 bg-gray-800 p-3 rounded">
+                  {JSON.stringify(marketAnalysis.market_drivers, null, 2) || 'No market drivers identified'}
+                </pre>
+              </div>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center h-64 space-y-4">
@@ -272,7 +297,7 @@ const MarketIntelligence = () => {
           <Button 
             onClick={fetchMarketAnalysis} 
             disabled={isLoading}
-            className="bg-primary hover:bg-primary/90"
+            className="bg-primary text-white hover:bg-primary/90"
           >
             {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Generate First Report"}
           </Button>
