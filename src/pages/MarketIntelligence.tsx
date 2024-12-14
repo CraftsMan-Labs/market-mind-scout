@@ -248,13 +248,27 @@ const MarketIntelligence = () => {
           <br />
           <h1 className="text-xl text-muted-foreground">Strategic Insights Dashboard</h1>
         </div>
-        <Button 
-          onClick={fetchMarketAnalysis} 
-          disabled={isLoading}
-          className="bg-primary text-white hover:bg-primary/90"
-        >
-          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Generate/Refresh Analysis"}
-        </Button>
+        <div className="flex space-x-2">
+          <Button 
+            onClick={fetchMarketAnalysis} 
+            disabled={isLoading}
+            className="bg-primary text-white hover:bg-primary/90"
+          >
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Generate/Refresh Analysis"}
+          </Button>
+          <Button 
+            onClick={() => {
+              if (marketAnalysis?.startup_data) {
+                generateMarketAnalysis(marketAnalysis.startup_data);
+              }
+            }} 
+            disabled={isLoading || !marketAnalysis?.startup_data}
+            variant="secondary"
+            className="bg-secondary text-secondary-foreground hover:bg-secondary/80"
+          >
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Regenerate Analysis"}
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (
