@@ -21,7 +21,7 @@ export const MarketStats = ({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {confidenceScore?.toFixed(2) || 'N/A'}%
+            {confidenceScore ? `${confidenceScore.toFixed(2)}%` : 'N/A'}
           </div>
           <p className="text-xs text-muted-foreground">Analysis Reliability</p>
         </CardContent>
@@ -35,7 +35,7 @@ export const MarketStats = ({
           <div className="text-sm">
             {insights?.slice(0, 2).map((insight, index) => (
               <p key={index} className="mb-1">{insight}</p>
-            ))}
+            )) || <p>No insights available</p>}
           </div>
         </CardContent>
       </Card>
@@ -59,7 +59,7 @@ export const MarketStats = ({
           <div className="text-sm">
             {seasonalityFactors?.slice(0, 2).map((factor, index) => (
               <p key={index} className="mb-1">{factor}</p>
-            ))}
+            )) || <p>No seasonality factors available</p>}
           </div>
         </CardContent>
       </Card>
