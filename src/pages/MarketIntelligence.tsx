@@ -278,9 +278,15 @@ const MarketIntelligence = () => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-200">Problem Breakdown</h3>
-                <pre className="text-gray-300 bg-gray-800 p-3 rounded">
-                  {JSON.stringify(marketAnalysis.problem_breakdown, null, 2) || 'No problem breakdown available'}
-                </pre>
+                <div className="text-gray-300 prose prose-invert">
+                  {marketAnalysis.problem_breakdown?.questions ? (
+                    <ReactMarkdown>
+                      {`### Problem Breakdown\n\n${marketAnalysis.problem_breakdown.questions.map((q, index) => `${index + 1}. ${q}`).join('\n')}`}
+                    </ReactMarkdown>
+                  ) : (
+                    'No problem breakdown available'
+                  )}
+                </div>
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-200">Market Drivers</h3>
