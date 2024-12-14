@@ -141,7 +141,7 @@ const CustomerOnboarding = () => {
               value={formData.problem_description}
               onChange={(e) => handleInputChange("problem_description", e.target.value)}
               placeholder="Describe the problem your startup is solving..."
-              className="bg-gray-800 border-gray-700"
+              className="bg-gray-800 border-gray-700 text-white"
             />
           </CardContent>
         </Card>
