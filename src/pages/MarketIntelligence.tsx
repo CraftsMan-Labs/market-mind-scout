@@ -122,13 +122,13 @@ const MarketIntelligence = () => {
           query: `Product Domain: ${startupData.target_customer} Offerings: ${startupData.business_model}`,
           startup_data: startupData
         })
-      })
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to generate market analysis')
+        throw new Error('Failed to generate market analysis');
       }
 
-      const rawData = await response.json()
+      const rawData = await response.json();
       
       if (!session?.user?.id) throw new Error('No user ID found');
 
@@ -154,7 +154,7 @@ const MarketIntelligence = () => {
         market_drivers: null,
         seasonality_factors: null,
         visualization_data: null
-      }
+      };
 
       const { error: saveError } = await supabase
         .from('market_intelligence_reports')
@@ -162,7 +162,7 @@ const MarketIntelligence = () => {
 
       if (saveError) throw saveError;
 
-      setMarketAnalysis(data)
+      setMarketAnalysis(data);
       
       if (startupData?.target_customer && startupData?.business_model) {
         await generateMarketVisualization(
@@ -174,57 +174,57 @@ const MarketIntelligence = () => {
       toast({
         title: "Market Analysis Generated",
         description: "New insights generated successfully"
-      })
+      });
     } catch (error) {
-      console.error('Market Analysis Generation Error:', error)
+      console.error('Market Analysis Generation Error:', error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Could not generate market analysis"
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
   const fetchMarketAnalysis = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const existingReport = await fetchExistingMarketAnalysis()
+      const existingReport = await fetchExistingMarketAnalysis();
       
       if (existingReport) {
-        setMarketAnalysis(existingReport)
+        setMarketAnalysis(existingReport);
         toast({
           title: "Market Analysis Loaded",
           description: "Existing report retrieved"
-        })
+        });
       } else {
-        const startupData = await fetchStartupData()
+        const startupData = await fetchStartupData();
         if (startupData) {
-          await generateMarketAnalysis(startupData)
+          await generateMarketAnalysis(startupData);
         } else {
           toast({
             variant: "default",
             title: "No Data",
             description: "Please complete the Customer Onboarding first"
-          })
+          });
         }
       }
     } catch (error) {
-      console.error('Market Analysis Fetch Error:', error)
+      console.error('Market Analysis Fetch Error:', error);
       toast({
         variant: "destructive",
         title: "Error",
         description: "Could not load market analysis"
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
   useEffect(() => {
-    fetchMarketAnalysis()
-  }, [session?.user?.id])
+    fetchMarketAnalysis();
+  }, [session?.user?.id]);
 
   return (
     <div className="p-8">
@@ -272,7 +272,7 @@ const MarketIntelligence = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default MarketIntelligence
+export default MarketIntelligence;

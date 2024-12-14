@@ -25,8 +25,18 @@ export interface MarketAnalysisData {
   market_drivers: any | null;
   metadata: any | null;
   original_query: string | null;
-  problem_breakdown: any | null;
-  search_results: any | null;
+  problem_breakdown: {
+    questions?: string[];
+  } | null;
+  search_results: {
+    [key: string]: {
+      yearly_insights: Array<{
+        year: number;
+        question: string;
+        analysis: string;
+      }>;
+    };
+  } | null;
   seasonality_factors: string[] | null;
   startup_data: any | null;
   status: 'not_started' | 'in_progress' | 'completed' | null;
