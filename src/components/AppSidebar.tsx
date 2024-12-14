@@ -19,6 +19,11 @@ const menuItems = [
         title: "Home",
         icon: Home,
         path: "/dashboard"
+      },
+      {
+        title: "Customer Onboarding",
+        icon: ClipboardCheck,
+        path: "/customer-onboarding"
       }
     ]
   },
@@ -64,12 +69,7 @@ const menuItems = [
         title: "Custom Report",
         icon: FileText,
         path: "/custom-report"
-      },
-      {
-        title: "Customer Onboarding",
-        icon: ClipboardCheck,
-        path: "/customer-onboarding"
-      },
+      }
     ]
   }
 ]

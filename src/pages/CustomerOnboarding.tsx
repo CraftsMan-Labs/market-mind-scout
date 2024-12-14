@@ -276,7 +276,7 @@ const CustomerOnboarding = () => {
           <Button
             variant="outline"
             onClick={() => navigate("/dashboard")}
-            className="border-gray-700 text-white hover:bg-gray-800"
+            className="border-gray-700 text-white hover:bg-gray-800 bg-[#ea384c] hover:bg-[#ea384c]/90"
           >
             Cancel
           </Button>
