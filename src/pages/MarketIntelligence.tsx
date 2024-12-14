@@ -10,6 +10,7 @@ interface MarketAnalysisData {
   id?: string
   user_id?: string
   img?: string
+  visualization_data?: string
   reason?: string
   insights?: string[]
   metadata?: {
@@ -18,6 +19,8 @@ interface MarketAnalysisData {
     y_axis_label?: string
     metrics?: string[]
     date_generated?: string
+    domain?: string
+    offerings?: string
   }
   confidence_score?: number
   seasonality_factors?: string[]
@@ -66,6 +69,58 @@ const MarketIntelligence = () => {
     }
   }
 
+  const generateMarketVisualization = async (domain: string, offerings: string) => {
+    try {
+      const response = await fetch(`http://localhost:8000/market-analysis/visualize-trend?query=Product Domain: ${domain} Offerings: ${offerings}`, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate market visualization');
+      }
+
+      const visualizationData = await response.text();
+
+      // Update the existing market analysis with visualization data
+      if (marketAnalysis) {
+        const updatedMarketAnalysis = {
+          ...marketAnalysis,
+          visualization_data: visualizationData,
+          metadata: {
+            ...marketAnalysis.metadata,
+            domain,
+            offerings
+          }
+        };
+
+        // Save updated market analysis to database
+        await supabase
+          .from('market_intelligence_reports')
+          .upsert({
+            ...updatedMarketAnalysis,
+            user_id: session?.user?.id
+          });
+
+        setMarketAnalysis(updatedMarketAnalysis);
+
+        toast({
+          title: "Market Visualization Generated",
+          description: "New market trend visualization created"
+        });
+      }
+    } catch (error) {
+      console.error('Market Visualization Generation Error:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not generate market visualization"
+      });
+    }
+  }
+
   const generateMarketAnalysis = async (startupData: any) => {
     setIsLoading(true)
     try {
@@ -87,7 +142,7 @@ const MarketIntelligence = () => {
       const data: MarketAnalysisData = await response.json()
       
       // Save the generated report to the database
-      await supabase
+      const savedReport = await supabase
         .from('market_intelligence_reports')
         .upsert({
           ...data,
@@ -97,6 +152,14 @@ const MarketIntelligence = () => {
 
       setMarketAnalysis(data)
       
+      // Automatically generate visualization if startup data is available
+      if (startupData?.target_customer && startupData?.business_model) {
+        await generateMarketVisualization(
+          startupData.target_customer, 
+          startupData.business_model
+        );
+      }
+
       toast({
         title: "Market Analysis Generated",
         description: data.metadata?.title || "New insights generated successfully"
@@ -227,14 +290,22 @@ const MarketIntelligence = () => {
             </Card>
           </div>
 
-          {marketAnalysis.img && (
+          {(marketAnalysis.img || marketAnalysis.visualization_data) && (
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-4">Market Trend Visualization</h2>
-              <img 
-                src={`data:image/png;base64,${marketAnalysis.img}`} 
-                alt="Market Trend" 
-                className="w-full max-h-[500px] object-contain"
-              />
+              {marketAnalysis.img && (
+                <img 
+                  src={`data:image/png;base64,${marketAnalysis.img}`} 
+                  alt="Market Trend" 
+                  className="w-full max-h-[500px] object-contain"
+                />
+              )}
+              {marketAnalysis.visualization_data && (
+                <div 
+                  dangerouslySetInnerHTML={{ __html: marketAnalysis.visualization_data }} 
+                  className="w-full max-h-[500px] overflow-auto"
+                />
+              )}
             </div>
           )}
         </div>
