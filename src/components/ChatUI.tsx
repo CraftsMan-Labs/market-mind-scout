@@ -27,7 +27,7 @@ export function ChatUI({ initialPrompt }: { initialPrompt?: string }) {
     setIsLoading(true)
 
     try {
-      const response = await fetch('https://your-api-url/chat/', {
+      const response = await fetch('https://localhost:8000/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
