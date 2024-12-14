@@ -89,6 +89,74 @@ export type Database = {
         }
         Relationships: []
       }
+      startup_evaluations: {
+        Row: {
+          business_model: string | null
+          competition_strategy: string | null
+          created_at: string | null
+          current_traction: string | null
+          funding_needs: string | null
+          id: string
+          key_metrics: string | null
+          main_challenges: string | null
+          problem_description: string | null
+          status:
+            | Database["public"]["Enums"]["startup_evaluation_status"]
+            | null
+          target_customer: string | null
+          team_description: string | null
+          updated_at: string | null
+          user_id: string
+          value_proposition: string | null
+        }
+        Insert: {
+          business_model?: string | null
+          competition_strategy?: string | null
+          created_at?: string | null
+          current_traction?: string | null
+          funding_needs?: string | null
+          id?: string
+          key_metrics?: string | null
+          main_challenges?: string | null
+          problem_description?: string | null
+          status?:
+            | Database["public"]["Enums"]["startup_evaluation_status"]
+            | null
+          target_customer?: string | null
+          team_description?: string | null
+          updated_at?: string | null
+          user_id: string
+          value_proposition?: string | null
+        }
+        Update: {
+          business_model?: string | null
+          competition_strategy?: string | null
+          created_at?: string | null
+          current_traction?: string | null
+          funding_needs?: string | null
+          id?: string
+          key_metrics?: string | null
+          main_challenges?: string | null
+          problem_description?: string | null
+          status?:
+            | Database["public"]["Enums"]["startup_evaluation_status"]
+            | null
+          target_customer?: string | null
+          team_description?: string | null
+          updated_at?: string | null
+          user_id?: string
+          value_proposition?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "startup_evaluations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -98,6 +166,7 @@ export type Database = {
     }
     Enums: {
       onboarding_status: "not_started" | "in_progress" | "completed"
+      startup_evaluation_status: "not_started" | "in_progress" | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
