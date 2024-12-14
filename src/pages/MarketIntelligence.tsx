@@ -69,7 +69,7 @@ const MarketIntelligence = () => {
   const generateMarketAnalysis = async (startupData: any) => {
     setIsLoading(true)
     try {
-      const response = await fetch('http://localhost:8000/market-analysis/generate', {
+      const response = await fetch('http://localhost:8000/market-analysis/analyze', {
         method: 'POST',
         headers: {
           'accept': 'application/json',
