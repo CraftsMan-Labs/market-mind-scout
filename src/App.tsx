@@ -20,6 +20,7 @@ import DataAnalytics from "./pages/DataAnalytics";
 import CustomReport from "./pages/CustomReport";
 import Onboarding from "./pages/Onboarding";
 import ChatAssistant from "./pages/ChatAssistant";
+import CustomerOnboarding from "./pages/CustomerOnboarding";
 
 const queryClient = new QueryClient();
 
@@ -138,6 +139,14 @@ const App = () => (
               element={
                 <ProtectedLayout>
                   <ChatAssistant />
+                </ProtectedLayout>
+              }
+            />
+            <Route
+              path="/customer-onboarding"
+              element={
+                <ProtectedLayout>
+                  <CustomerOnboarding />
                 </ProtectedLayout>
               }
             />

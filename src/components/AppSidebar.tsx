@@ -1,4 +1,4 @@
-import { FileText, BarChart, PieChart, TrendingUp, Users, Database, Home, MessageSquare } from "lucide-react"
+import { FileText, BarChart, PieChart, TrendingUp, Users, Database, Home, MessageSquare, ClipboardCheck } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import {
   Sidebar,
@@ -64,6 +64,11 @@ const menuItems = [
         title: "Custom Report",
         icon: FileText,
         path: "/custom-report"
+      },
+      {
+        title: "Customer Onboarding",
+        icon: ClipboardCheck,
+        path: "/customer-onboarding"
       },
     ]
   }
