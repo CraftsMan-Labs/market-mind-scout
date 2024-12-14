@@ -77,7 +77,10 @@ const MarketIntelligence = () => {
 
   const generateMarketVisualization = async (domain: string, offerings: string) => {
     try {
-      const response = await fetch(`http://localhost:8000/market-analysis/visualize-trend?query=Product Domain: ${domain} Offerings: ${offerings}`, {
+      // Create the query string properly
+      const queryString = encodeURIComponent(`Product Domain: ${domain} Offerings: ${offerings}`);
+      
+      const response = await fetch(`http://localhost:8000/market-analysis/visualize-trend?query=${queryString}`, {
         method: 'POST',
         headers: {
           'accept': 'application/json'
