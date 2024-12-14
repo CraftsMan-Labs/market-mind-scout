@@ -239,8 +239,15 @@ const MarketIntelligence = () => {
           )}
         </div>
       ) : (
-        <div className="text-center text-muted-foreground">
-          No market analysis data available
+        <div className="flex flex-col items-center justify-center h-64 space-y-4">
+          <p className="text-muted-foreground text-lg">No market analysis reports available</p>
+          <Button 
+            onClick={fetchMarketAnalysis} 
+            disabled={isLoading}
+            className="bg-primary hover:bg-primary/90"
+          >
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Generate First Report"}
+          </Button>
         </div>
       )}
     </div>
