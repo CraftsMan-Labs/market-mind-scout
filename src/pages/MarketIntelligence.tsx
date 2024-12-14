@@ -137,7 +137,8 @@ const MarketIntelligence = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          query: JSON.stringify(startupData)
+          query: `Product Domain: ${startupData.target_customer} Offerings: ${startupData.business_model}`,
+          startup_data: startupData
         })
       })
 
