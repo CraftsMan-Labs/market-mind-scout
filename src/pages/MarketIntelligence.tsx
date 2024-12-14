@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { BarChart as BarChartIcon, Loader2 } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
+import ReactMarkdown from 'react-markdown'
 import { Button } from "@/components/ui/button"
 import { supabase } from "@/integrations/supabase/client"
 import { useSessionContext } from "@supabase/auth-helpers-react"
@@ -150,9 +151,7 @@ const MarketIntelligence = () => {
           y_axis_label: 'Market Impact',
           metrics: ['Growth', 'Innovation', 'Adoption']
         },
-        confidence_score: rawData.search_results?.yearly_insights 
-          ? rawData.search_results.yearly_insights.length * 20 
-          : Math.random() * 100,
+        // Removed confidence score
         startup_data: startupData,
         user_id: session.user.id,
         market_drivers: rawData.search_results?.yearly_insights?.map(insight => ({
@@ -256,7 +255,6 @@ const MarketIntelligence = () => {
       ) : marketAnalysis ? (
         <div className="space-y-6">
           <MarketStats 
-            confidenceScore={marketAnalysis.confidence_score}
             insights={marketAnalysis.insights}
             dateGenerated={marketAnalysis.metadata?.date_generated}
             seasonalityFactors={marketAnalysis.seasonality_factors}
@@ -270,7 +268,9 @@ const MarketIntelligence = () => {
             <div className="space-y-4">
               <div>
                 <h3 className="text-lg font-semibold text-gray-200">Comprehensive Report</h3>
-                <p className="text-gray-300">{marketAnalysis.comprehensive_report || 'No detailed report available'}</p>
+                <div className="text-gray-300 prose prose-invert">
+                  <ReactMarkdown>{marketAnalysis.comprehensive_report || 'No detailed report available'}</ReactMarkdown>
+                </div>
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-200">Original Query</h3>
